@@ -3,18 +3,20 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>무지개 유치원 & 어린이집 캐릭터 위키</title>
   <style>
-    /* [중요] GitHub에 업로드할 때 
-      1. font 폴더 안에 '온글잎 뿌까.ttf' 파일이 있어야 합니다.
-      2. images 폴더 안에 1.png ~ 23.png 파일이 있어야 합니다.
-    */
+    /* 폰트 설정 */
     @font-face {
       font-family: 'OwnglyphPucca';
       src: url('font/온글잎 뿌까.ttf') format('truetype');
       font-weight: normal;
       font-style: normal;
+    }
+
+    /* 모든 요소의 크기를 테두리 포함으로 설정 (레이아웃 깨짐 방지) */
+    * {
+      box-sizing: border-box;
     }
 
     :root {
@@ -26,7 +28,7 @@
       --text: #2d3436;
       --text-light: #636e72;
       --shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
-      --glass: rgba(255, 255, 255, 0.8);
+      --glass: rgba(255, 255, 255, 0.9);
     }
 
     body {
@@ -35,23 +37,24 @@
       background: var(--bg);
       color: var(--text);
       line-height: 1.6;
+      overflow-x: hidden; /* 가로 스크롤 강제 숨김 */
     }
 
     header {
       background: linear-gradient(135deg, #ffcfdf 0%, #ff5c8a 100%);
-      padding: 40px 24px;
-      font-size: 36px;
+      padding: 30px 20px;
+      font-size: 28px;
       font-weight: bold;
       text-align: center;
       color: white;
       text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      box-shadow: 0 4px 15px rgba(255, 92, 138, 0.2);
+      word-break: keep-all;
     }
 
     nav {
       background: var(--glass);
       backdrop-filter: blur(10px);
-      padding: 15px;
+      padding: 10px 0;
       border-bottom: 1px solid rgba(255, 255, 255, 0.3);
       position: sticky;
       top: 0;
@@ -60,15 +63,23 @@
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
     }
 
+    /* 메뉴 링크들을 감싸는 박스 */
+    nav div.menu-links {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
     nav a {
-      margin: 0 15px;
       text-decoration: none;
       font-weight: bold;
       color: var(--text-light);
-      font-size: 18px;
-      transition: all 0.3s;
-      padding: 5px 10px;
+      font-size: 16px;
+      padding: 8px 12px;
       border-radius: 8px;
+      transition: all 0.3s;
     }
 
     nav a:hover {
@@ -76,81 +87,84 @@
       background: rgba(255, 92, 138, 0.05);
     }
 
+    /* 검색창 디자인 */
     .search-bar {
-      margin-top: 15px;
       display: flex;
       justify-content: center;
-      gap: 10px;
+      padding: 0 20px;
     }
 
     .search-bar input {
       padding: 12px 20px;
-      width: 400px;
+      width: 100%;
+      max-width: 400px; /* PC에서는 너무 커지지 않게 제한 */
       border: 2px solid var(--primary-light);
       border-radius: 30px;
       outline: none;
       font-size: 16px;
       font-family: inherit;
       transition: all 0.3s;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
     }
 
     .search-bar input:focus {
       border-color: var(--primary);
       box-shadow: 0 0 15px rgba(255, 92, 138, 0.2);
-      width: 450px;
     }
 
     main {
-      padding: 40px 24px;
+      padding: 30px 20px;
       max-width: 1100px;
       margin: auto;
     }
 
     section {
-      margin-bottom: 60px;
+      margin-bottom: 50px;
     }
 
     h2 {
-      border-left: 8px solid var(--primary);
-      padding-left: 15px;
-      font-size: 28px;
-      margin-bottom: 30px;
+      border-left: 6px solid var(--primary);
+      padding-left: 12px;
+      font-size: 24px;
+      margin-bottom: 20px;
       color: var(--text);
     }
 
+    /* [반응형 그리드] 화면 크기에 따라 카드 배치 자동 조정 */
     .char-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
-      gap: 25px;
+      /* 최소 너비 300px, 공간 남으면 늘어남 */
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
     }
 
     .card {
       background: var(--white);
       border-radius: 20px;
-      padding: 25px;
+      padding: 20px;
       box-shadow: var(--shadow);
       display: flex;
-      gap: 25px;
-      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      gap: 20px;
+      transition: transform 0.3s;
       border: 1px solid rgba(0, 0, 0, 0.02);
+      align-items: center;
     }
 
     .card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+      transform: translateY(-5px);
     }
 
     .face-container {
-      width: 150px;
+      width: 120px;
+      flex-shrink: 0;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
+      align-items: center;
     }
 
     .face {
-      width: 150px;
-      height: 150px;
+      width: 120px;
+      height: 120px;
       border-radius: 20px;
       background: #fdfdfd;
       display: flex;
@@ -165,72 +179,112 @@
       width: 100%;
       height: 100%;
       object-fit: contain;
-      transition: transform 0.5s;
     }
 
     .upload-btn {
-      font-size: 12px;
-      padding: 8px;
+      font-size: 11px;
+      padding: 6px 10px;
       cursor: pointer;
       background: var(--bg);
       border: 1px dashed var(--primary-light);
       border-radius: 10px;
-      text-align: center;
       color: var(--text-light);
+      white-space: nowrap;
     }
 
     .info-box {
       flex: 1;
+      min-width: 0;
     }
 
     .info-box h3 {
-      margin: 0 0 12px 0;
-      font-size: 28px;
+      margin: 0 0 10px 0;
+      font-size: 24px;
       color: var(--primary);
+      word-break: keep-all;
     }
 
     .info-text {
-      font-size: 16px;
+      font-size: 15px;
       margin-bottom: 4px;
       display: flex;
+      align-items: flex-start;
     }
 
     .info-text b {
       color: var(--text-light);
-      min-width: 70px;
+      min-width: 60px;
       font-size: 13px;
+      flex-shrink: 0;
     }
 
     .tag {
       display: inline-block;
       background: var(--primary-light);
       color: var(--secondary);
-      padding: 5px 15px;
+      padding: 4px 12px;
       border-radius: 20px;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: bold;
-      margin-top: 10px;
+      margin-top: 8px;
     }
 
     footer {
       text-align: center;
-      padding: 60px;
+      padding: 40px 20px;
       color: #ccc;
-      font-size: 14px;
+      font-size: 13px;
       border-top: 1px solid #eee;
+    }
+
+    /* 📱 [모바일 전용 디자인] 화면 너비 600px 이하일 때 적용 */
+    @media (max-width: 600px) {
+      .char-grid {
+        grid-template-columns: 1fr; /* 한 줄에 1개씩 */
+      }
+
+      .card {
+        flex-direction: column; /* 사진 위, 글자 아래 */
+        text-align: center;
+        gap: 15px;
+      }
+
+      .info-text {
+        justify-content: center; /* 글자 가운데 정렬 */
+      }
+      
+      .info-text b {
+        text-align: right;
+        margin-right: 8px;
+      }
+
+      .face-container {
+        width: 140px; /* 모바일에서 사진 조금 더 크게 */
+      }
+      
+      .face {
+        width: 140px;
+        height: 140px;
+      }
+      
+      header {
+        font-size: 24px;
+      }
     }
   </style>
 </head>
 
 <body>
-  <header>🌈 무지개 유치원 & 어린이집 위키</header>
+  <header>🌈 무지개 유치원<br>& 어린이집 위키</header>
 
   <nav>
-    <a href="#kindergarten">🏫 유치원</a>
-    <a href="#daycare">🧸 어린이집</a>
-    <a href="#pair">🤝 궁합</a>
+    <div class="menu-links">
+      <a href="#kindergarten">🏫 유치원</a>
+      <a href="#daycare">🧸 어린이집</a>
+      <a href="#pair">🤝 궁합</a>
+    </div>
     <div class="search-bar">
-      <input type="text" id="searchInput" placeholder="이름, 종류, MBTI 검색...">
+      <input type="text" id="searchInput" placeholder="이름, 종류, 특징 검색...">
     </div>
   </nav>
 
@@ -249,13 +303,13 @@
       <h2>🤝 특별 궁합</h2>
       <div class="char-grid">
         <div class="card">
-          <div class="info-box">
+          <div class="info-box" style="text-align:center;">
             <h3>🧸 귀염즈: 루피 × 룹희</h3>
             <p>귀여움 시너지 폭발 조합!</p>
           </div>
         </div>
         <div class="card">
-          <div class="info-box">
+          <div class="info-box" style="text-align:center;">
             <h3>🐥 뽀쨕즈: 루피 × 야코</h3>
             <p>사고뭉치 마성의 조합!</p>
           </div>
@@ -265,7 +319,6 @@
   </main>
 
   <script>
-    // GitHub Pages용 데이터 (이미지 경로를 images/파일명.png 로 수정함)
     const charactersData = [
       { "이름": "루피", "종류": "비버", "소속": "유치원", "MBTI": "INTP", "특징": "제일뚱뚱", "좋아하는것": "걸그룹", "싫어하는것": "힘이약한거", "이미지": "images/1.png", "성별": "남자", "취미": "킥복싱", "비밀": "초고도비만" },
       { "이름": "룹희", "종류": "비버", "소속": "어린이집", "MBTI": "ENFP", "특징": "중간뚱뚱", "좋아하는것": "치킨", "싫어하는것": "야채", "이미지": "images/2.png", "성별": "여자", "취미": "권투", "비밀": "고도비만" },
@@ -312,12 +365,12 @@
           </div>
           <div class="info-box">
             <h3>${char.이름}</h3>
-            <div class="info-text"><b>종류:</b> ${char.종류}</div>
-            <div class="info-text"><b>성별:</b> ${char.성별}</div>
-            <div class="info-text"><b>MBTI:</b> ${char.MBTI}</div>
-            <div class="info-text"><b>특징:</b> ${char.특징}</div>
-            <div class="info-text"><b>좋아함:</b> ${char.좋아하는것}</div>
-            <div class="info-text"><b>취미:</b> ${char.취미}</div>
+            <div class="info-text"><b>종류:</b> <span>${char.종류}</span></div>
+            <div class="info-text"><b>성별:</b> <span>${char.성별}</span></div>
+            <div class="info-text"><b>MBTI:</b> <span>${char.MBTI}</span></div>
+            <div class="info-text"><b>특징:</b> <span>${char.특징}</span></div>
+            <div class="info-text"><b>좋아함:</b> <span>${char.좋아하는것}</span></div>
+            <div class="info-text"><b>취미:</b> <span>${char.취미}</span></div>
             <span class="tag"># ${char.비밀}</span>
           </div>`;
         if (char.소속 === '유치원') {
@@ -332,17 +385,31 @@
       document.querySelector('#daycare h2').textContent = `🧸 어린이집 원생 (${dCount}명)`;
     }
 
-    // GitHub Pages 전용 미리보기 함수 (서버 통신 제거됨)
+    /* ★ [중요] GitHub Pages 전용 이미지 미리보기 함수 ★
+     설명: GitHub Pages는 정적 서버라 파일을 직접 저장할 수 없습니다.
+     대신 브라우저의 'FileReader' 기능을 사용해, 사용자가 선택한 사진을
+     즉석에서 읽어 화면에만 잠시 보여주는 방식입니다.
+    */
     window.previewImage = (event, name) => {
+      // 1. 사용자가 선택한 파일 가져오기
       const file = event.target.files[0];
+
+      // 2. 파일이 정상적으로 선택되었는지 확인
       if (file) {
+        // 3. 파일을 읽을 수 있는 도구(Reader) 생성
         const reader = new FileReader();
+
+        // 4. 읽기가 완료되면 실행할 동작 정의
         reader.onload = (e) => {
+          // 선택한 캐릭터의 이미지 태그(img src)를 방금 읽은 파일 데이터로 교체
           document.getElementById(`img-${name}`).src = e.target.result;
         };
+
+        // 5. 파일을 'Data URL' 형식(이미지 주소처럼 쓸 수 있는 문자열)으로 읽기 시작
         reader.readAsDataURL(file);
-        // 안내 메시지
-        alert("GitHub Pages는 정적 사이트입니다.\n이미지는 현재 화면에서만 임시로 바뀌며, 새로고침하면 원래대로 돌아갑니다.");
+
+        // 6. 사용자에게 안내 (GitHub Pages 특성상 저장이 안 됨을 알림)
+        alert("🖼️ 사진이 임시로 변경되었습니다.\n(주의: GitHub Pages는 정적 사이트라 실제 파일 저장은 안 되며, 새로고침 시 원래대로 돌아옵니다.)");
       }
     };
 
