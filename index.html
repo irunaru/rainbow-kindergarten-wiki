@@ -108,6 +108,37 @@
       box-shadow: 0 0 15px rgba(255, 92, 138, 0.2);
     }
 
+    /* 편집 모드 토글 버튼 */
+    .edit-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 200;
+    }
+
+    .edit-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 15px 25px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      box-shadow: 0 4px 15px rgba(255, 92, 138, 0.4);
+      transition: all 0.3s;
+      font-family: inherit;
+    }
+
+    .edit-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(255, 92, 138, 0.6);
+    }
+
+    .edit-btn.active {
+      background: #51cf66;
+    }
+
     main {
       padding: 30px 20px;
       max-width: 1100px;
@@ -142,6 +173,7 @@
       transition: transform 0.3s;
       border: 1px solid rgba(0, 0, 0, 0.02);
       align-items: center;
+      position: relative;
     }
 
     .card:hover {
@@ -152,23 +184,86 @@
       width: 120px;
       height: 120px;
       border-radius: 20px;
-      background: #eee; /* 이미지가 없을 때 기본 배경색 */
+      background: #eee;
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
       border: 3px solid #fff;
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-      /* [추가] 이미지가 로드되기 전에도 이 크기를 유지하게 함 */
-      flex-shrink: 0; 
+      flex-shrink: 0;
+      position: relative;
     }
 
     .face img {
       width: 100%;
       height: 100%;
-      object-fit: contain;
-      /* [추가] 이미지가 없는 경우 아주 작게 보이게 하거나 숨김 처리 */
+      object-fit: cover;
       display: block;
+    }
+
+    /* 이미지 업로드 컨트롤 */
+    .upload-controls {
+      display: none;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      gap: 5px;
+      flex-direction: column;
+    }
+
+    body.edit-mode .upload-controls {
+      display: flex;
+    }
+
+    .file-input-wrapper {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .file-input-wrapper input[type=file] {
+      position: absolute;
+      left: -9999px;
+    }
+
+    .file-input-label {
+      background: var(--primary);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.3s;
+      display: block;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .file-input-label:hover {
+      background: var(--secondary);
+    }
+
+    .delete-img-btn {
+      background: #ff6b6b;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.3s;
+      white-space: nowrap;
+    }
+
+    .delete-img-btn:hover {
+      background: #fa5252;
+    }
+
+    .upload-status {
+      font-size: 10px;
+      color: var(--text-light);
+      text-align: center;
+      margin-top: 2px;
     }
 
     .info-box {
@@ -245,6 +340,13 @@
       header {
         font-size: 24px;
       }
+
+      .upload-controls {
+        position: static;
+        flex-direction: row;
+        justify-content: center;
+        margin-top: 10px;
+      }
     }
   </style>
 </head>
@@ -262,6 +364,10 @@
       <input type="text" id="searchInput" placeholder="이름, 종류, 특징 검색...">
     </div>
   </nav>
+
+  <div class="edit-toggle">
+    <button class="edit-btn" onclick="toggleEditMode()">✏️ 편집 모드</button>
+  </div>
 
   <main>
     <section id="kindergarten">
@@ -294,6 +400,9 @@
   </main>
 
   <script>
+    const API_URL = 'https://kindergarten-api.irunaru.workers.dev';
+    let editMode = false;
+
     const charactersData = [
       { "이름": "루피", "종류": "비버", "소속": "유치원", "MBTI": "INTP", "특징": "제일뚱뚱", "좋아하는것": "걸그룹", "싫어하는것": "힘이약한거", "이미지": "images/1.png", "성별": "남자", "취미": "킥복싱", "비밀": "초고도비만" },
       { "이름": "룹희", "종류": "비버", "소속": "어린이집", "MBTI": "ENFP", "특징": "중간뚱뚱", "좋아하는것": "치킨", "싫어하는것": "야채", "이미지": "images/2.png", "성별": "여자", "취미": "권투", "비밀": "고도비만" },
@@ -320,6 +429,110 @@
       { "이름": "하치와레", "종류": "고양이", "소속": "유치원", "MBTI": "ENFP", "특징": "귀여움", "좋아하는것": "귀여운거", "싫어하는것": "똥", "이미지": "images/23.png", "성별": "여자", "취미": "노래", "비밀": "없어용" }
     ];
 
+    // 편집 모드 토글
+    function toggleEditMode() {
+      editMode = !editMode;
+      document.body.classList.toggle('edit-mode', editMode);
+      
+      const btn = document.querySelector('.edit-btn');
+      if (editMode) {
+        btn.textContent = '✅ 완료';
+        btn.classList.add('active');
+      } else {
+        btn.textContent = '✏️ 편집 모드';
+        btn.classList.remove('active');
+      }
+    }
+
+    // 캐릭터 ID 생성 (이름을 영문으로 변환)
+    function getCharacterId(name) {
+      return name.replace(/\s/g, '_').toLowerCase();
+    }
+
+    // 이미지 로드
+    async function loadCloudImage(characterId, imgElement) {
+      try {
+        const response = await fetch(`${API_URL}/image/${characterId}`);
+        if (response.ok) {
+          const blob = await response.blob();
+          const url = URL.createObjectURL(blob);
+          imgElement.src = url;
+          return true;
+        }
+      } catch (error) {
+        console.log(`No cloud image for ${characterId}`);
+      }
+      return false;
+    }
+
+    // 이미지 업로드
+    async function uploadImage(characterId, name) {
+      const fileInput = document.getElementById(`file-${characterId}`);
+      const file = fileInput.files[0];
+      const statusDiv = document.getElementById(`status-${characterId}`);
+
+      if (!file) return;
+
+      statusDiv.textContent = '업로드 중...';
+
+      const formData = new FormData();
+      formData.append('image', file);
+
+      try {
+        const response = await fetch(`${API_URL}/upload/${characterId}`, {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (response.ok) {
+          statusDiv.textContent = '✅ 완료!';
+          setTimeout(() => {
+            statusDiv.textContent = '';
+          }, 2000);
+          
+          // 이미지 새로고침
+          const imgElement = document.getElementById(`img-${characterId}`);
+          await loadCloudImage(characterId, imgElement);
+        } else {
+          const error = await response.text();
+          statusDiv.textContent = `❌ 실패`;
+        }
+      } catch (error) {
+        statusDiv.textContent = `❌ 오류`;
+      }
+
+      fileInput.value = '';
+    }
+
+    // 이미지 삭제
+    async function deleteImage(characterId, originalImagePath) {
+      if (!confirm('클라우드 이미지를 삭제하시겠습니까?')) return;
+
+      const statusDiv = document.getElementById(`status-${characterId}`);
+      statusDiv.textContent = '삭제 중...';
+
+      try {
+        const response = await fetch(`${API_URL}/image/${characterId}`, {
+          method: 'DELETE',
+        });
+
+        if (response.ok) {
+          statusDiv.textContent = '✅ 삭제!';
+          setTimeout(() => {
+            statusDiv.textContent = '';
+          }, 2000);
+
+          // 원본 이미지로 복원
+          const imgElement = document.getElementById(`img-${characterId}`);
+          imgElement.src = originalImagePath;
+        } else {
+          statusDiv.textContent = '❌ 실패';
+        }
+      } catch (error) {
+        statusDiv.textContent = `❌ 오류`;
+      }
+    }
+
     function renderCharacters(charList) {
       const kList = document.getElementById('k-list');
       const dList = document.getElementById('d-list');
@@ -328,11 +541,12 @@
       let kCount = 0, dCount = 0;
 
       charList.forEach(char => {
+        const characterId = getCharacterId(char.이름);
         const card = document.createElement('div');
         card.className = 'card';
         card.innerHTML = `
           <div class="face">
-            <img src="${char.이미지}" alt="${char.이름}" onerror="this.src='https://via.placeholder.com/150?text=No+Image'">
+            <img id="img-${characterId}" src="${char.이미지}" alt="${char.이름}" onerror="this.src='https://via.placeholder.com/150?text=No+Image'">
           </div>
           <div class="info-box">
             <h3>${char.이름}</h3>
@@ -343,7 +557,16 @@
             <div class="info-text"><b>좋아함:</b> <span>${char.좋아하는것}</span></div>
             <div class="info-text"><b>취미:</b> <span>${char.취미}</span></div>
             <span class="tag"># ${char.비밀}</span>
+          </div>
+          <div class="upload-controls">
+            <div class="file-input-wrapper">
+              <input type="file" id="file-${characterId}" accept="image/*" onchange="uploadImage('${characterId}', '${char.이름}')">
+              <label for="file-${characterId}" class="file-input-label">📸 업로드</label>
+            </div>
+            <button class="delete-img-btn" onclick="deleteImage('${characterId}', '${char.이미지}')">🗑️ 삭제</button>
+            <div class="upload-status" id="status-${characterId}"></div>
           </div>`;
+        
         if (char.소속 === '유치원') {
           kList.appendChild(card);
           kCount++;
@@ -351,7 +574,12 @@
           dList.appendChild(card);
           dCount++;
         }
+
+        // 클라우드 이미지 로드 시도
+        const imgElement = document.getElementById(`img-${characterId}`);
+        loadCloudImage(characterId, imgElement);
       });
+      
       document.querySelector('#kindergarten h2').textContent = `🏫 유치원 원생 (${kCount}명)`;
       document.querySelector('#daycare h2').textContent = `🧸 어린이집 원생 (${dCount}명)`;
     }
