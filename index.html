@@ -108,15 +108,27 @@
       box-shadow: 0 0 15px rgba(255, 92, 138, 0.2);
     }
 
+    /* 로딩 표시 */
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-light);
+    }
+
     /* 편집 모드 토글 버튼 */
     .edit-toggle {
       position: fixed;
       bottom: 20px;
       right: 20px;
       z-index: 200;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
 
-    .edit-btn {
+    .edit-btn,
+    .add-btn,
+    .sync-btn {
       background: var(--primary);
       color: white;
       border: none;
@@ -130,13 +142,30 @@
       font-family: inherit;
     }
 
-    .edit-btn:hover {
+    .edit-btn:hover,
+    .add-btn:hover,
+    .sync-btn:hover {
       transform: scale(1.05);
       box-shadow: 0 6px 20px rgba(255, 92, 138, 0.6);
     }
 
     .edit-btn.active {
       background: #51cf66;
+    }
+
+    .add-btn {
+      background: #339af0;
+      display: none;
+    }
+
+    .sync-btn {
+      background: #f59f00;
+      font-size: 14px;
+      padding: 12px 20px;
+    }
+
+    body.edit-mode .add-btn {
+      display: block;
     }
 
     main {
@@ -159,7 +188,7 @@
 
     .char-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
       gap: 20px;
     }
 
@@ -168,11 +197,8 @@
       border-radius: 20px;
       padding: 20px;
       box-shadow: var(--shadow);
-      display: flex;
-      gap: 20px;
       transition: transform 0.3s;
       border: 1px solid rgba(0, 0, 0, 0.02);
-      align-items: center;
       position: relative;
     }
 
@@ -180,10 +206,17 @@
       transform: translateY(-5px);
     }
 
+    .card-header {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+      align-items: flex-start;
+    }
+
     .face {
-      width: 120px;
-      height: 120px;
-      border-radius: 20px;
+      width: 100px;
+      height: 100px;
+      border-radius: 15px;
       background: #eee;
       display: flex;
       align-items: center;
@@ -202,23 +235,38 @@
       display: block;
     }
 
-    /* 이미지 업로드 컨트롤 */
-    .upload-controls {
-      display: none;
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      gap: 5px;
-      flex-direction: column;
+    .header-info {
+      flex: 1;
+      min-width: 0;
     }
 
-    body.edit-mode .upload-controls {
+    .header-info h3 {
+      margin: 0 0 5px 0;
+      font-size: 22px;
+      color: var(--primary);
+      word-break: keep-all;
+    }
+
+    .header-info .subtitle {
+      font-size: 14px;
+      color: var(--text-light);
+      margin-bottom: 8px;
+    }
+
+    .image-controls {
+      display: none;
+      gap: 5px;
+      margin-top: 8px;
+    }
+
+    body.edit-mode .image-controls {
       display: flex;
     }
 
     .file-input-wrapper {
       position: relative;
       overflow: hidden;
+      flex: 1;
     }
 
     .file-input-wrapper input[type=file] {
@@ -229,10 +277,10 @@
     .file-input-label {
       background: var(--primary);
       color: white;
-      padding: 6px 12px;
-      border-radius: 8px;
+      padding: 5px 10px;
+      border-radius: 6px;
       cursor: pointer;
-      font-size: 12px;
+      font-size: 11px;
       transition: all 0.3s;
       display: block;
       text-align: center;
@@ -247,10 +295,10 @@
       background: #ff6b6b;
       color: white;
       border: none;
-      padding: 6px 12px;
-      border-radius: 8px;
+      padding: 5px 10px;
+      border-radius: 6px;
       cursor: pointer;
-      font-size: 12px;
+      font-size: 11px;
       transition: all 0.3s;
       white-space: nowrap;
     }
@@ -259,37 +307,58 @@
       background: #fa5252;
     }
 
-    .upload-status {
-      font-size: 10px;
+    .card-body {
+      display: grid;
+      gap: 8px;
+    }
+
+    .info-row {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 10px;
+      align-items: start;
+    }
+
+    .info-label {
       color: var(--text-light);
-      text-align: center;
-      margin-top: 2px;
-    }
-
-    .info-box {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .info-box h3 {
-      margin: 0 0 10px 0;
-      font-size: 24px;
-      color: var(--primary);
-      word-break: keep-all;
-    }
-
-    .info-text {
-      font-size: 15px;
-      margin-bottom: 4px;
-      display: flex;
-      align-items: flex-start;
-    }
-
-    .info-text b {
-      color: var(--text-light);
-      min-width: 60px;
       font-size: 13px;
-      flex-shrink: 0;
+      font-weight: bold;
+      padding-top: 2px;
+    }
+
+    .info-value {
+      font-size: 14px;
+      color: var(--text);
+      word-break: break-word;
+    }
+
+    .info-value input,
+    .info-value select {
+      width: 100%;
+      padding: 6px 10px;
+      border: 2px solid var(--primary-light);
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      transition: all 0.3s;
+    }
+
+    .info-value input:focus,
+    .info-value select:focus {
+      border-color: var(--primary);
+    }
+
+    .editable {
+      display: none;
+    }
+
+    body.edit-mode .editable {
+      display: block;
+    }
+
+    body.edit-mode .non-editable {
+      display: none;
     }
 
     .tag {
@@ -298,9 +367,157 @@
       color: var(--secondary);
       padding: 4px 12px;
       border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-top: 5px;
+    }
+
+    .card-actions {
+      display: none;
+      margin-top: 15px;
+      gap: 10px;
+      padding-top: 15px;
+      border-top: 1px solid #eee;
+    }
+
+    body.edit-mode .card-actions {
+      display: flex;
+    }
+
+    .save-btn,
+    .delete-char-btn {
+      flex: 1;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+      transition: all 0.3s;
+      font-family: inherit;
+    }
+
+    .save-btn {
+      background: #51cf66;
+      color: white;
+    }
+
+    .save-btn:hover {
+      background: #40c057;
+    }
+
+    .delete-char-btn {
+      background: #ff6b6b;
+      color: white;
+    }
+
+    .delete-char-btn:hover {
+      background: #fa5252;
+    }
+
+    .status-message {
+      font-size: 11px;
+      color: var(--text-light);
+      text-align: center;
+      margin-top: 5px;
+    }
+
+    /* 새 캐릭터 추가 모달 */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 300;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .modal-content h3 {
+      margin: 0 0 20px 0;
+      color: var(--primary);
+      font-size: 22px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
       font-size: 13px;
       font-weight: bold;
-      margin-top: 8px;
+      color: var(--text-light);
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid var(--primary-light);
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: var(--primary);
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .modal-actions button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      font-family: inherit;
+      transition: all 0.3s;
+    }
+
+    .modal-create-btn {
+      background: var(--primary);
+      color: white;
+    }
+
+    .modal-create-btn:hover {
+      background: var(--secondary);
+    }
+
+    .modal-cancel-btn {
+      background: #e9ecef;
+      color: var(--text);
+    }
+
+    .modal-cancel-btn:hover {
+      background: #dee2e6;
     }
 
     footer {
@@ -316,36 +533,12 @@
         grid-template-columns: 1fr;
       }
 
-      .card {
-        flex-direction: column;
-        text-align: center;
-        gap: 15px;
-      }
-
-      .info-text {
-        justify-content: center;
-      }
-
-      .info-text b {
-        text-align: right;
-        margin-right: 8px;
-      }
-
-      .face {
-        width: 140px;
-        height: 140px;
-        margin: 0 auto;
+      .info-row {
+        grid-template-columns: 70px 1fr;
       }
 
       header {
         font-size: 24px;
-      }
-
-      .upload-controls {
-        position: static;
-        flex-direction: row;
-        justify-content: center;
-        margin-top: 10px;
       }
     }
   </style>
@@ -366,32 +559,95 @@
   </nav>
 
   <div class="edit-toggle">
+    <button class="sync-btn" onclick="syncData()">🔄 클라우드 동기화</button>
     <button class="edit-btn" onclick="toggleEditMode()">✏️ 편집 모드</button>
+    <button class="add-btn" onclick="openAddModal()">➕ 캐릭터 추가</button>
+  </div>
+
+  <!-- 새 캐릭터 추가 모달 -->
+  <div class="modal" id="addModal">
+    <div class="modal-content">
+      <h3>새 캐릭터 추가</h3>
+      <div class="form-group">
+        <label>이름 *</label>
+        <input type="text" id="new-name" placeholder="예: 루피">
+      </div>
+      <div class="form-group">
+        <label>소속 *</label>
+        <select id="new-group">
+          <option value="유치원">유치원</option>
+          <option value="어린이집">어린이집</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>종류</label>
+        <input type="text" id="new-type" placeholder="예: 비버">
+      </div>
+      <div class="form-group">
+        <label>성별</label>
+        <select id="new-gender">
+          <option value="남자">남자</option>
+          <option value="여자">여자</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>MBTI</label>
+        <input type="text" id="new-mbti" placeholder="예: ENFP">
+      </div>
+      <div class="form-group">
+        <label>특징</label>
+        <input type="text" id="new-feature" placeholder="예: 귀여움">
+      </div>
+      <div class="form-group">
+        <label>좋아하는 것</label>
+        <input type="text" id="new-like" placeholder="예: 치킨">
+      </div>
+      <div class="form-group">
+        <label>싫어하는 것</label>
+        <input type="text" id="new-dislike" placeholder="예: 야채">
+      </div>
+      <div class="form-group">
+        <label>취미</label>
+        <input type="text" id="new-hobby" placeholder="예: 권투">
+      </div>
+      <div class="form-group">
+        <label>비밀</label>
+        <input type="text" id="new-secret" placeholder="예: 고도비만">
+      </div>
+      <div class="modal-actions">
+        <button class="modal-create-btn" onclick="createCharacter()">생성</button>
+        <button class="modal-cancel-btn" onclick="closeAddModal()">취소</button>
+      </div>
+    </div>
   </div>
 
   <main>
     <section id="kindergarten">
       <h2>🏫 유치원 원생</h2>
-      <div id="k-list" class="char-grid"></div>
+      <div id="k-list" class="char-grid">
+        <div class="loading">데이터 불러오는 중...</div>
+      </div>
     </section>
 
     <section id="daycare">
       <h2>🧸 어린이집 원생</h2>
-      <div id="d-list" class="char-grid"></div>
+      <div id="d-list" class="char-grid">
+        <div class="loading">데이터 불러오는 중...</div>
+      </div>
     </section>
 
     <section id="pair">
       <h2>🤝 특별 궁합</h2>
       <div class="char-grid">
         <div class="card">
-          <div class="info-box" style="text-align:center;">
-            <h3>🧸 귀염즈: 루피 × 룹희</h3>
+          <div style="text-align:center;">
+            <h3 style="color: var(--primary); margin: 0 0 10px 0;">🧸 귀염즈: 루피 × 룹희</h3>
             <p>귀여움 시너지 폭발 조합!</p>
           </div>
         </div>
         <div class="card">
-          <div class="info-box" style="text-align:center;">
-            <h3>🐥 뽀쨕즈: 루피 × 야코</h3>
+          <div style="text-align:center;">
+            <h3 style="color: var(--primary); margin: 0 0 10px 0;">🐥 뽀쨕즈: 루피 × 야코</h3>
             <p>사고뭉치 마성의 조합!</p>
           </div>
         </div>
@@ -402,38 +658,76 @@
   <script>
     const API_URL = 'https://kindergarten-api.irunaru.workers.dev';
     let editMode = false;
+    let charactersData = [];
+    let dataLoaded = false;
 
-    const charactersData = [
-      { "이름": "루피", "종류": "비버", "소속": "유치원", "MBTI": "INTP", "특징": "제일뚱뚱", "좋아하는것": "걸그룹", "싫어하는것": "힘이약한거", "이미지": "images/1.png", "성별": "남자", "취미": "킥복싱", "비밀": "초고도비만" },
-      { "이름": "룹희", "종류": "비버", "소속": "어린이집", "MBTI": "ENFP", "특징": "중간뚱뚱", "좋아하는것": "치킨", "싫어하는것": "야채", "이미지": "images/2.png", "성별": "여자", "취미": "권투", "비밀": "고도비만" },
-      { "이름": "뤂이", "종류": "비버", "소속": "어린이집", "MBTI": "ESTJ", "특징": "마름", "좋아하는것": "쌍절곤", "싫어하는것": "마른것", "이미지": "images/3.png", "성별": "여자", "취미": "쌍절곤", "비밀": "저체중" },
-      { "이름": "야코", "종류": "돼지", "소속": "유치원", "MBTI": "ENFP", "특징": "사동이형", "좋아하는것": "민초", "싫어하는것": "파인애플피자", "이미지": "images/4.png", "성별": "남자", "취미": "민초먹기", "비밀": "오이싫어" },
-      { "이름": "사동", "종류": "돼지", "소속": "어린이집", "MBTI": "ENFP", "특징": "잼민이", "좋아하는것": "백설이", "싫어하는것": "공부", "이미지": "images/5.png", "성별": "남자", "취미": "유튜브보기", "비밀": "백설이짝사랑" },
-      { "이름": "우사기", "종류": "토끼", "소속": "유치원", "MBTI": "ISTP", "특징": "누렇다", "좋아하는것": "공부", "싫어하는것": "바보", "이미지": "images/6.png", "성별": "여자", "취미": "공부", "비밀": "공부좋아" },
-      { "이름": "임일후", "종류": "오리", "소속": "유치원", "MBTI": "ENTP", "특징": "입이 길다", "좋아하는것": "아이돌", "싫어하는것": "냄새", "이미지": "images/7.png", "성별": "남자", "취미": "눕기", "비밀": "덕질좋아" },
-      { "이름": "쨩구리", "종류": "개구리", "소속": "유치원", "MBTI": "ESTP", "특징": "나비넥타이", "좋아하는것": "게임", "싫어하는것": "공부", "이미지": "images/8.png", "성별": "여자", "취미": "개굴거리기", "비밀": "게임좋아" },
-      { "이름": "쨩규리", "종류": "개구리", "소속": "유치원", "MBTI": "ENFP", "특징": "평범하다", "좋아하는것": "놀기", "싫어하는것": "시험보기", "이미지": "images/9.png", "성별": "여자", "취미": "장난치기", "비밀": "노는게제일좋아" },
-      { "이름": "쨩담곰", "종류": "곰", "소속": "유치원", "MBTI": "ISTJ", "특징": "입이삐져있다", "좋아하는것": "천재", "싫어하는것": "바보", "이미지": "images/10.png", "성별": "여자", "취미": "잠자기", "비밀": "나는천재" },
-      { "이름": "쨩만듀", "종류": "반전문어", "소속": "어린이집", "MBTI": "ISTP", "특징": "제일작다", "좋아하는것": "깨끗한거", "싫어하는것": "더러운거", "이미지": "images/11.png", "성별": "여자", "취미": "그림그리기", "비밀": "작아서고민" },
-      { "이름": "쨩만쥬", "종류": "반전문어", "소속": "어린이집", "MBTI": "ISTP", "특징": "중간사이즈", "좋아하는것": "맛있는거", "싫어하는것": "맛없는거", "이미지": "images/12.png", "성별": "여자", "취미": "먹기", "비밀": "배고파" },
-      { "이름": "쨩문어", "종류": "반전문어", "소속": "유치원", "MBTI": "ENFP", "특징": "제일큰문어", "좋아하는것": "착한거", "싫어하는것": "나쁜거", "이미지": "images/13.png", "성별": "여자", "취미": "노래부르기", "비밀": "세젤귀" },
-      { "이름": "쨩무너", "종류": "반전문어", "소속": "어린이집", "MBTI": "ISTP", "특징": "말랑함", "좋아하는것": "놀기", "싫어하는것": "쉬기", "이미지": "images/14.png", "성별": "여자", "취미": "놀기", "비밀": "놀고싶어" },
-      { "이름": "쨩빤쮸", "종류": "토끼", "소속": "유치원", "MBTI": "ENFP", "특징": "팬티만입음", "좋아하는것": "팬티", "싫어하는것": "추운거", "이미지": "images/15.png", "성별": "여자", "취미": "복싱", "비밀": "팬티조아" },
-      { "이름": "쨩서빈", "종류": "베렝구어", "소속": "어린이집", "MBTI": "ENFP", "특징": "애기임", "좋아하는것": "쪽쪽이", "싫어하는것": "복싱", "이미지": "images/16.png", "성별": "여자", "취미": "쪽쪽이물기", "비밀": "쪽쪽이..." },
-      { "이름": "쨩설", "종류": "호랑이", "소속": "유치원", "MBTI": "ENFP", "특징": "하얌", "좋아하는것": "스키", "싫어하는것": "봄", "이미지": "images/17.png", "성별": "여자", "취미": "태권도", "비밀": "운동조아" },
-      { "이름": "쨩세빈", "종류": "베렝구어", "소속": "어린이집", "MBTI": "ENFP", "특징": "제일작은애기", "좋아하는것": "쎈놈", "싫어하는것": "약한놈", "이미지": "images/18.png", "성별": "여자", "취미": "은근쎔", "비밀": "난쎄" },
-      { "이름": "쨩송", "종류": "오랑우탄", "소속": "유치원", "MBTI": "ENFP", "특징": "배가나옴", "좋아하는것": "뮤지컬", "싫어하는것": "공연취소", "이미지": "images/19.png", "성별": "여자", "취미": "트롯트", "비밀": "노래가조아" },
-      { "이름": "쨩슝", "종류": "오랑우탄", "소속": "유치원", "MBTI": "ENFP", "특징": "배가나옴", "좋아하는것": "리듬체조", "싫어하는것": "못먹기", "이미지": "images/20.png", "성별": "여자", "취미": "먹기", "비밀": "먹는게조아" },
-      { "이름": "쨩크용", "종류": "강아지", "소속": "어린이집", "MBTI": "ENFP", "특징": "강아지", "좋아하는것": "패기", "싫어하는것": "약한놈", "이미지": "images/21.png", "성별": "여자", "취미": "패기", "비밀": "복싱조아" },
-      { "이름": "치이카와", "종류": "곰", "소속": "유치원", "MBTI": "ENFP", "특징": "하얌", "좋아하는것": "요쿠르트", "싫어하는것": "음식썩기", "이미지": "images/22.png", "성별": "여자", "취미": "요구르트먹기", "비밀": "먹기사랑" },
-      { "이름": "하치와레", "종류": "고양이", "소속": "유치원", "MBTI": "ENFP", "특징": "귀여움", "좋아하는것": "귀여운거", "싫어하는것": "똥", "이미지": "images/23.png", "성별": "여자", "취미": "노래", "비밀": "없어용" }
-    ];
+    // Cloudflare에서 데이터 로드
+    async function loadFromCloud() {
+      try {
+        const response = await fetch(`${API_URL}/characters`);
+        if (response.ok) {
+          const data = await response.json();
+          if (data && data.length > 0) {
+            charactersData = data;
+            dataLoaded = true;
+            console.log('✅ 클라우드에서 데이터 로드 완료:', data.length, '명');
+            return true;
+          }
+        }
+      } catch (error) {
+        console.error('클라우드 로드 실패:', error);
+      }
+      return false;
+    }
+
+    // Cloudflare에 데이터 저장
+    async function saveToCloud() {
+      try {
+        const response = await fetch(`${API_URL}/characters`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(charactersData),
+        });
+
+        if (response.ok) {
+          console.log('✅ 클라우드 저장 완료');
+          return true;
+        }
+      } catch (error) {
+        console.error('클라우드 저장 실패:', error);
+      }
+      return false;
+    }
+
+    // 데이터 동기화
+    async function syncData() {
+      const btn = event.target;
+      btn.textContent = '🔄 동기화 중...';
+      btn.disabled = true;
+
+      const success = await loadFromCloud();
+
+      if (success) {
+        renderCharacters(charactersData);
+        btn.textContent = '✅ 동기화 완료!';
+        setTimeout(() => {
+          btn.textContent = '🔄 클라우드 동기화';
+          btn.disabled = false;
+        }, 2000);
+      } else {
+        btn.textContent = '❌ 동기화 실패';
+        setTimeout(() => {
+          btn.textContent = '🔄 클라우드 동기화';
+          btn.disabled = false;
+        }, 2000);
+      }
+    }
 
     // 편집 모드 토글
     function toggleEditMode() {
       editMode = !editMode;
       document.body.classList.toggle('edit-mode', editMode);
-      
+
       const btn = document.querySelector('.edit-btn');
       if (editMode) {
         btn.textContent = '✅ 완료';
@@ -444,7 +738,7 @@
       }
     }
 
-    // 캐릭터 ID 생성 (이름을 영문으로 변환)
+    // 캐릭터 ID 생성
     function getCharacterId(name) {
       return name.replace(/\s/g, '_').toLowerCase();
     }
@@ -469,7 +763,7 @@
     async function uploadImage(characterId, name) {
       const fileInput = document.getElementById(`file-${characterId}`);
       const file = fileInput.files[0];
-      const statusDiv = document.getElementById(`status-${characterId}`);
+      const statusDiv = document.getElementById(`img-status-${characterId}`);
 
       if (!file) return;
 
@@ -489,12 +783,10 @@
           setTimeout(() => {
             statusDiv.textContent = '';
           }, 2000);
-          
-          // 이미지 새로고침
+
           const imgElement = document.getElementById(`img-${characterId}`);
           await loadCloudImage(characterId, imgElement);
         } else {
-          const error = await response.text();
           statusDiv.textContent = `❌ 실패`;
         }
       } catch (error) {
@@ -508,7 +800,7 @@
     async function deleteImage(characterId, originalImagePath) {
       if (!confirm('클라우드 이미지를 삭제하시겠습니까?')) return;
 
-      const statusDiv = document.getElementById(`status-${characterId}`);
+      const statusDiv = document.getElementById(`img-status-${characterId}`);
       statusDiv.textContent = '삭제 중...';
 
       try {
@@ -522,14 +814,119 @@
             statusDiv.textContent = '';
           }, 2000);
 
-          // 원본 이미지로 복원
           const imgElement = document.getElementById(`img-${characterId}`);
-          imgElement.src = originalImagePath;
+          imgElement.src = originalImagePath || 'https://via.placeholder.com/150?text=No+Image';
         } else {
           statusDiv.textContent = '❌ 실패';
         }
       } catch (error) {
         statusDiv.textContent = `❌ 오류`;
+      }
+    }
+
+    // 캐릭터 정보 저장
+    async function saveCharacter(index) {
+      const char = charactersData[index];
+      const characterId = getCharacterId(char.이름);
+
+      char.종류 = document.getElementById(`type-${index}`).value;
+      char.성별 = document.getElementById(`gender-${index}`).value;
+      char.MBTI = document.getElementById(`mbti-${index}`).value;
+      char.특징 = document.getElementById(`feature-${index}`).value;
+      char.좋아하는것 = document.getElementById(`like-${index}`).value;
+      char.싫어하는것 = document.getElementById(`dislike-${index}`).value;
+      char.취미 = document.getElementById(`hobby-${index}`).value;
+      char.비밀 = document.getElementById(`secret-${index}`).value;
+      char.소속 = document.getElementById(`group-${index}`).value;
+
+      const statusDiv = document.getElementById(`save-status-${index}`);
+      statusDiv.textContent = '저장 중...';
+
+      const success = await saveToCloud();
+
+      if (success) {
+        statusDiv.textContent = '✅ 저장 완료!';
+        setTimeout(() => {
+          statusDiv.textContent = '';
+        }, 2000);
+        renderCharacters(charactersData);
+      } else {
+        statusDiv.textContent = '❌ 저장 실패';
+      }
+    }
+
+    // 캐릭터 삭제
+    async function deleteCharacter(index) {
+      if (!confirm('정말로 이 캐릭터를 삭제하시겠습니까?')) return;
+
+      charactersData.splice(index, 1);
+
+      const success = await saveToCloud();
+
+      if (success) {
+        renderCharacters(charactersData);
+      } else {
+        alert('삭제 실패! 다시 시도해주세요.');
+      }
+    }
+
+    // 새 캐릭터 추가 모달 열기
+    function openAddModal() {
+      document.getElementById('addModal').classList.add('active');
+
+      document.getElementById('new-name').value = '';
+      document.getElementById('new-group').value = '유치원';
+      document.getElementById('new-type').value = '';
+      document.getElementById('new-gender').value = '남자';
+      document.getElementById('new-mbti').value = '';
+      document.getElementById('new-feature').value = '';
+      document.getElementById('new-like').value = '';
+      document.getElementById('new-dislike').value = '';
+      document.getElementById('new-hobby').value = '';
+      document.getElementById('new-secret').value = '';
+    }
+
+    // 모달 닫기
+    function closeAddModal() {
+      document.getElementById('addModal').classList.remove('active');
+    }
+
+    // 새 캐릭터 생성
+    async function createCharacter() {
+      const name = document.getElementById('new-name').value.trim();
+      if (!name) {
+        alert('이름을 입력해주세요!');
+        return;
+      }
+
+      const newChar = {
+        "이름": name,
+        "소속": document.getElementById('new-group').value,
+        "종류": document.getElementById('new-type').value || '-',
+        "성별": document.getElementById('new-gender').value,
+        "MBTI": document.getElementById('new-mbti').value || '-',
+        "특징": document.getElementById('new-feature').value || '-',
+        "좋아하는것": document.getElementById('new-like').value || '-',
+        "싫어하는것": document.getElementById('new-dislike').value || '-',
+        "취미": document.getElementById('new-hobby').value || '-',
+        "비밀": document.getElementById('new-secret').value || '-',
+        "이미지": 'https://via.placeholder.com/150?text=No+Image'
+      };
+
+      charactersData.push(newChar);
+
+      const success = await saveToCloud();
+
+      if (success) {
+        closeAddModal();
+        renderCharacters(charactersData);
+
+        setTimeout(() => {
+          const section = newChar.소속 === '유치원' ? 'kindergarten' : 'daycare';
+          document.getElementById(section).scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      } else {
+        alert('생성 실패! 다시 시도해주세요.');
       }
     }
 
@@ -540,33 +937,116 @@
       dList.innerHTML = '';
       let kCount = 0, dCount = 0;
 
-      charList.forEach(char => {
+      charList.forEach((char, index) => {
         const characterId = getCharacterId(char.이름);
         const card = document.createElement('div');
         card.className = 'card';
         card.innerHTML = `
-          <div class="face">
-            <img id="img-${characterId}" src="${char.이미지}" alt="${char.이름}" onerror="this.src='https://via.placeholder.com/150?text=No+Image'">
-          </div>
-          <div class="info-box">
-            <h3>${char.이름}</h3>
-            <div class="info-text"><b>종류:</b> <span>${char.종류}</span></div>
-            <div class="info-text"><b>성별:</b> <span>${char.성별}</span></div>
-            <div class="info-text"><b>MBTI:</b> <span>${char.MBTI}</span></div>
-            <div class="info-text"><b>특징:</b> <span>${char.특징}</span></div>
-            <div class="info-text"><b>좋아함:</b> <span>${char.좋아하는것}</span></div>
-            <div class="info-text"><b>취미:</b> <span>${char.취미}</span></div>
-            <span class="tag"># ${char.비밀}</span>
-          </div>
-          <div class="upload-controls">
-            <div class="file-input-wrapper">
-              <input type="file" id="file-${characterId}" accept="image/*" onchange="uploadImage('${characterId}', '${char.이름}')">
-              <label for="file-${characterId}" class="file-input-label">📸 업로드</label>
+          <div class="card-header">
+            <div class="face">
+              <img id="img-${characterId}" src="${char.이미지}" alt="${char.이름}" onerror="this.src='https://via.placeholder.com/150?text=No+Image'">
             </div>
-            <button class="delete-img-btn" onclick="deleteImage('${characterId}', '${char.이미지}')">🗑️ 삭제</button>
-            <div class="upload-status" id="status-${characterId}"></div>
-          </div>`;
-        
+            <div class="header-info">
+              <h3>${char.이름}</h3>
+              <div class="subtitle">${char.종류} · ${char.성별}</div>
+              <div class="image-controls">
+                <div class="file-input-wrapper">
+                  <input type="file" id="file-${characterId}" accept="image/*" onchange="uploadImage('${characterId}', '${char.이름}')">
+                  <label for="file-${characterId}" class="file-input-label">📸 업로드</label>
+                </div>
+                <button class="delete-img-btn" onclick="deleteImage('${characterId}', '${char.이미지}')">🗑️</button>
+              </div>
+              <div class="status-message" id="img-status-${characterId}"></div>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="info-row">
+              <div class="info-label">소속</div>
+              <div class="info-value">
+                <span class="non-editable">${char.소속}</span>
+                <select class="editable" id="group-${index}">
+                  <option value="유치원" ${char.소속 === '유치원' ? 'selected' : ''}>유치원</option>
+                  <option value="어린이집" ${char.소속 === '어린이집' ? 'selected' : ''}>어린이집</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="info-row">
+              <div class="info-label">종류</div>
+              <div class="info-value">
+                <span class="non-editable">${char.종류}</span>
+                <input class="editable" type="text" id="type-${index}" value="${char.종류}">
+              </div>
+            </div>
+
+            <div class="info-row">
+              <div class="info-label">성별</div>
+              <div class="info-value">
+                <span class="non-editable">${char.성별}</span>
+                <select class="editable" id="gender-${index}">
+                  <option value="남자" ${char.성별 === '남자' ? 'selected' : ''}>남자</option>
+                  <option value="여자" ${char.성별 === '여자' ? 'selected' : ''}>여자</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="info-row">
+              <div class="info-label">MBTI</div>
+              <div class="info-value">
+                <span class="non-editable">${char.MBTI}</span>
+                <input class="editable" type="text" id="mbti-${index}" value="${char.MBTI}">
+              </div>
+            </div>
+
+            <div class="info-row">
+              <div class="info-label">특징</div>
+              <div class="info-value">
+                <span class="non-editable">${char.특징}</span>
+                <input class="editable" type="text" id="feature-${index}" value="${char.특징}">
+              </div>
+            </div>
+
+            <div class="info-row">
+              <div class="info-label">좋아함</div>
+              <div class="info-value">
+                <span class="non-editable">${char.좋아하는것}</span>
+                <input class="editable" type="text" id="like-${index}" value="${char.좋아하는것}">
+              </div>
+            </div>
+
+            <div class="info-row">
+              <div class="info-label">싫어함</div>
+              <div class="info-value">
+                <span class="non-editable">${char.싫어하는것}</span>
+                <input class="editable" type="text" id="dislike-${index}" value="${char.싫어하는것}">
+              </div>
+            </div>
+
+            <div class="info-row">
+              <div class="info-label">취미</div>
+              <div class="info-value">
+                <span class="non-editable">${char.취미}</span>
+                <input class="editable" type="text" id="hobby-${index}" value="${char.취미}">
+              </div>
+            </div>
+
+            <div class="info-row">
+              <div class="info-label">비밀</div>
+              <div class="info-value">
+                <span class="non-editable"><span class="tag"># ${char.비밀}</span></span>
+                <input class="editable" type="text" id="secret-${index}" value="${char.비밀}">
+              </div>
+            </div>
+          </div>
+
+          <div class="card-actions">
+            <button class="save-btn" onclick="saveCharacter(${index})">💾 저장</button>
+            <button class="delete-char-btn" onclick="deleteCharacter(${index})">🗑️ 삭제</button>
+          </div>
+          <div class="status-message" id="save-status-${index}"></div>
+        `;
+
         if (char.소속 === '유치원') {
           kList.appendChild(card);
           kCount++;
@@ -575,11 +1055,10 @@
           dCount++;
         }
 
-        // 클라우드 이미지 로드 시도
         const imgElement = document.getElementById(`img-${characterId}`);
         loadCloudImage(characterId, imgElement);
       });
-      
+
       document.querySelector('#kindergarten h2').textContent = `🏫 유치원 원생 (${kCount}명)`;
       document.querySelector('#daycare h2').textContent = `🧸 어린이집 원생 (${dCount}명)`;
     }
@@ -587,12 +1066,57 @@
     document.getElementById('searchInput').addEventListener('input', (e) => {
       const term = e.target.value.toLowerCase();
       const filtered = charactersData.filter(c =>
-        c.이름.includes(term) || c.종류.includes(term) || c.MBTI.toLowerCase().includes(term)
+        c.이름.includes(term) || c.종류.includes(term) || c.MBTI.toLowerCase().includes(term) ||
+        c.특징.includes(term) || c.취미.includes(term)
       );
       renderCharacters(filtered);
     });
 
-    window.addEventListener('DOMContentLoaded', () => renderCharacters(charactersData));
+    document.getElementById('addModal').addEventListener('click', (e) => {
+      if (e.target.id === 'addModal') {
+        closeAddModal();
+      }
+    });
+
+    // 초기 로드
+    window.addEventListener('DOMContentLoaded', async () => {
+      const cloudLoaded = await loadFromCloud();
+
+      // 클라우드에 데이터가 없으면 기본 데이터 사용
+      if (!cloudLoaded) {
+        console.log('⚠️ 클라우드에 데이터 없음, 기본 데이터 사용');
+        charactersData = [
+          { "이름": "루피", "종류": "비버", "소속": "유치원", "MBTI": "INTP", "특징": "제일뚱뚱", "좋아하는것": "걸그룹", "싫어하는것": "힘이약한거", "이미지": "images/1.png", "성별": "남자", "취미": "킥복싱", "비밀": "초고도비만" },
+          { "이름": "룹희", "종류": "비버", "소속": "어린이집", "MBTI": "ENFP", "특징": "중간뚱뚱", "좋아하는것": "치킨", "싫어하는것": "야채", "이미지": "images/2.png", "성별": "여자", "취미": "권투", "비밀": "고도비만" },
+          { "이름": "뤂이", "종류": "비버", "소속": "어린이집", "MBTI": "ESTJ", "특징": "마름", "좋아하는것": "쌍절곤", "싫어하는것": "마른것", "이미지": "images/3.png", "성별": "여자", "취미": "쌍절곤", "비밀": "저체중" },
+          { "이름": "야코", "종류": "돼지", "소속": "유치원", "MBTI": "ENFP", "특징": "사동이형", "좋아하는것": "민초", "싫어하는것": "파인애플피자", "이미지": "images/4.png", "성별": "남자", "취미": "민초먹기", "비밀": "오이싫어" },
+          { "이름": "사동", "종류": "돼지", "소속": "어린이집", "MBTI": "ENFP", "특징": "잼민이", "좋아하는것": "백설이", "싫어하는것": "공부", "이미지": "images/5.png", "성별": "남자", "취미": "유튜브보기", "비밀": "백설이짝사랑" },
+          { "이름": "우사기", "종류": "토끼", "소속": "유치원", "MBTI": "ISTP", "특징": "누렇다", "좋아하는것": "공부", "싫어하는것": "바보", "이미지": "images/6.png", "성별": "여자", "취미": "공부", "비밀": "공부좋아" },
+          { "이름": "임일후", "종류": "오리", "소속": "유치원", "MBTI": "ENTP", "특징": "입이 길다", "좋아하는것": "아이돌", "싫어하는것": "냄새", "이미지": "images/7.png", "성별": "남자", "취미": "눕기", "비밀": "덕질좋아" },
+          { "이름": "쨩구리", "종류": "개구리", "소속": "유치원", "MBTI": "ESTP", "특징": "나비넥타이", "좋아하는것": "게임", "싫어하는것": "공부", "이미지": "images/8.png", "성별": "여자", "취미": "개굴거리기", "비밀": "게임좋아" },
+          { "이름": "쨩규리", "종류": "개구리", "소속": "유치원", "MBTI": "ENFP", "특징": "평범하다", "좋아하는것": "놀기", "싫어하는것": "시험보기", "이미지": "images/9.png", "성별": "여자", "취미": "장난치기", "비밀": "노는게제일좋아" },
+          { "이름": "쨩담곰", "종류": "곰", "소속": "유치원", "MBTI": "ISTJ", "특징": "입이삐져있다", "좋아하는것": "천재", "싫어하는것": "바보", "이미지": "images/10.png", "성별": "여자", "취미": "잠자기", "비밀": "나는천재" },
+          { "이름": "쨩만듀", "종류": "반전문어", "소속": "어린이집", "MBTI": "ISTP", "특징": "제일작다", "좋아하는것": "깨끗한거", "싫어하는것": "더러운거", "이미지": "images/11.png", "성별": "여자", "취미": "그림그리기", "비밀": "작아서고민" },
+          { "이름": "쨩만쥬", "종류": "반전문어", "소속": "어린이집", "MBTI": "ISTP", "특징": "중간사이즈", "좋아하는것": "맛있는거", "싫어하는것": "맛없는거", "이미지": "images/12.png", "성별": "여자", "취미": "먹기", "비밀": "배고파" },
+          { "이름": "쨩문어", "종류": "반전문어", "소속": "유치원", "MBTI": "ENFP", "특징": "제일큰문어", "좋아하는것": "착한거", "싫어하는것": "나쁜거", "이미지": "images/13.png", "성별": "여자", "취미": "노래부르기", "비밀": "세젤귀" },
+          { "이름": "쨩무너", "종류": "반전문어", "소속": "어린이집", "MBTI": "ISTP", "특징": "말랑함", "좋아하는것": "놀기", "싫어하는것": "쉬기", "이미지": "images/14.png", "성별": "여자", "취미": "놀기", "비밀": "놀고싶어" },
+          { "이름": "쨩빤쮸", "종류": "토끼", "소속": "유치원", "MBTI": "ENFP", "특징": "팬티만입음", "좋아하는것": "팬티", "싫어하는것": "추운거", "이미지": "images/15.png", "성별": "여자", "취미": "복싱", "비밀": "팬티조아" },
+          { "이름": "쨩서빈", "종류": "베렝구어", "소속": "어린이집", "MBTI": "ENFP", "특징": "애기임", "좋아하는것": "쪽쪽이", "싫어하는것": "복싱", "이미지": "images/16.png", "성별": "여자", "취미": "쪽쪽이물기", "비밀": "쪽쪽이..." },
+          { "이름": "쨩설", "종류": "호랑이", "소속": "유치원", "MBTI": "ENFP", "특징": "하얌", "좋아하는것": "스키", "싫어하는것": "봄", "이미지": "images/17.png", "성별": "여자", "취미": "태권도", "비밀": "운동조아" },
+          { "이름": "쨩세빈", "종류": "베렝구어", "소속": "어린이집", "MBTI": "ENFP", "특징": "제일작은애기", "좋아하는것": "쎈놈", "싫어하는것": "약한놈", "이미지": "images/18.png", "성별": "여자", "취미": "은근쎔", "비밀": "난쎄" },
+          { "이름": "쨩송", "종류": "오랑우탄", "소속": "유치원", "MBTI": "ENFP", "특징": "배가나옴", "좋아하는것": "뮤지컬", "싫어하는것": "공연취소", "이미지": "images/19.png", "성별": "여자", "취미": "트롯트", "비밀": "노래가조아" },
+          { "이름": "쨩슝", "종류": "오랑우탄", "소속": "유치원", "MBTI": "ENFP", "특징": "배가나옴", "좋아하는것": "리듬체조", "싫어하는것": "못먹기", "이미지": "images/20.png", "성별": "여자", "취미": "먹기", "비밀": "먹는게조아" },
+          { "이름": "쨩크용", "종류": "강아지", "소속": "어린이집", "MBTI": "ENFP", "특징": "강아지", "좋아하는것": "패기", "싫어하는것": "약한놈", "이미지": "images/21.png", "성별": "여자", "취미": "패기", "비밀": "복싱조아" },
+          { "이름": "치이카와", "종류": "곰", "소속": "유치원", "MBTI": "ENFP", "특징": "하얌", "좋아하는것": "요쿠르트", "싫어하는것": "음식썩기", "이미지": "images/22.png", "성별": "여자", "취미": "요구르트먹기", "비밀": "먹기사랑" },
+          { "이름": "하치와레", "종류": "고양이", "소속": "유치원", "MBTI": "ENFP", "특징": "귀여움", "좋아하는것": "귀여운거", "싫어하는것": "똥", "이미지": "images/23.png", "성별": "여자", "취미": "노래", "비밀": "없어용" }
+        ];
+
+        // 기본 데이터를 클라우드에 저장
+        await saveToCloud();
+      }
+
+      renderCharacters(charactersData);
+    });
   </script>
 </body>
 
