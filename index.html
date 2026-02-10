@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>무지개 유치원 & 어린이집 캐릭터 위키</title>
+  <style>
+    /* 폰트 설정: font 폴더 내 ttf 파일 참조 */
+    @font-face {
+      font-family: 'OwnglyphPucca';
+      src: url('font/온글잎 뿌까.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    :root {
+      --primary: #ff5c8a;
+      --primary-light: #ffcfdf;
+      --secondary: #d6336c;
+      --white: #ffffff;
+      --bg: #f8f9fa;
+      --text: #2d3436;
+      --text-light: #636e72;
+      --shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+      --glass: rgba(255, 255, 255, 0.8);
+    }
+
+    body {
+      font-family: 'OwnglyphPucca', "Apple SD Gothic Neo", sans-serif;
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    header {
+      background: linear-gradient(135deg, #ffcfdf 0%, #ff5c8a 100%);
+      padding: 40px 24px;
+      font-size: 36px;
+      font-weight: bold;
+      text-align: center;
+      color: white;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 15px rgba(255, 92, 138, 0.2);
+    }
+
+    nav {
+      background: var(--glass);
+      backdrop-filter: blur(10px);
+      padding: 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+    }
+
+    nav a {
+      margin: 0 15px;
+      text-decoration: none;
+      font-weight: bold;
+      color: var(--text-light);
+      font-size: 18px;
+      transition: all 0.3s;
+      padding: 5px 10px;
+      border-radius: 8px;
+    }
+
+    nav a:hover {
+      color: var(--primary);
+      background: rgba(255, 92, 138, 0.05);
+    }
+
+    .search-bar {
+      margin-top: 15px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .search-bar input {
+      padding: 12px 20px;
+      width: 400px;
+      border: 2px solid var(--primary-light);
+      border-radius: 30px;
+      outline: none;
+      font-size: 16px;
+      font-family: inherit;
+      transition: all 0.3s;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+    }
+
+    .search-bar input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 15px rgba(255, 92, 138, 0.2);
+      width: 450px;
+    }
+
+    main {
+      padding: 40px 24px;
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    section {
+      margin-bottom: 60px;
+    }
+
+    h2 {
+      border-left: 8px solid var(--primary);
+      padding-left: 15px;
+      font-size: 28px;
+      margin-bottom: 30px;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+    }
+
+    .char-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+      gap: 25px;
+    }
+
+    .card {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: var(--shadow);
+      display: flex;
+      gap: 25px;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border: 1px solid rgba(0, 0, 0, 0.02);
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .face-container {
+      width: 150px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .face {
+      width: 150px;
+      height: 150px;
+      border-radius: 20px;
+      background: #fdfdfd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border: 3px solid #fff;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .face img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transition: transform 0.5s;
+    }
+
+    .card:hover .face img {
+      transform: scale(1.15);
+    }
+
+    .upload-btn {
+      font-size: 12px;
+      padding: 8px;
+      cursor: pointer;
+      background: var(--bg);
+      border: 1px dashed var(--primary-light);
+      border-radius: 10px;
+      text-align: center;
+      color: var(--text-light);
+      transition: all 0.2s;
+    }
+
+    .upload-btn:hover {
+      background: var(--primary-light);
+      color: var(--secondary);
+    }
+
+    .info-box {
+      flex: 1;
+    }
+
+    .info-box h3 {
+      margin: 0 0 12px 0;
+      font-size: 28px;
+      color: var(--primary);
+    }
+
+    .info-text {
+      font-size: 16px;
+      color: var(--text);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: baseline;
+    }
+
+    .info-text b {
+      color: var(--text-light);
+      font-size: 13px;
+      min-width: 65px;
+      font-weight: 600;
+    }
+
+    .tag-container {
+      margin-top: 15px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag {
+      background: var(--primary-light);
+      color: var(--secondary);
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: bold;
+      box-shadow: 0 2px 5px rgba(255, 92, 138, 0.1);
+    }
+
+    footer {
+      text-align: center;
+      padding: 60px;
+      color: #ccc;
+      font-size: 14px;
+      border-top: 1px solid #eee;
+    }
+
+    @media (max-width: 768px) {
+      .char-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .info-text {
+        justify-content: center;
+      }
+
+      .search-bar input {
+        width: 80%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>🌈 무지개 유치원 & 어린이집 위키</header>
+
+  <nav>
+    <a href="#kindergarten">🏫 유치원</a>
+    <a href="#daycare">🧸 어린이집</a>
+    <a href="#pair">🤝 궁합</a>
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="캐릭터 이름, 종류, MBTI 검색...">
+    </div>
+  </nav>
+
+  <main>
+    <section id="kindergarten">
+      <h2>🏫 유치원 원생 (14명)</h2>
+      <div id="k-list" class="char-grid"></div>
+    </section>
+
+    <section id="daycare">
+      <h2>🧸 어린이집 원생 (9명)</h2>
+      <div id="d-list" class="char-grid"></div>
+    </section>
+
+    <section id="pair">
+      <h2>🤝 특별 궁합</h2>
+      <div class="char-grid">
+        <div class="card">
+          <div class="info-box">
+            <h3>🧸 귀염즈: 루피 × 룹희</h3>
+            <p>함께 있으면 시너지가 폭발하여 가만히 있어도 귀여움 지수가 상승하는 조합입니다.</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="info-box">
+            <h3>🐥 뽀쨕즈: 루피 × 야코</h3>
+            <p>조용히 하자고 말한 쪽이 먼저 사고 치는 마성의 조합!</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="info-box">
+            <h3>💖 환상의 짝꿍: 치이카와 × 하치와레</h3>
+            <p>둘이 함께라면 어떤 고난도 이겨낼 수 있는 최고의 절친 조합!</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const charactersData = [
+      {
+        "이름": "루피",
+        "종류": "비버",
+        "소속": "유치원",
+        "MBTI": "INTP",
+        "특징": "제일뚱뚱",
+        "좋아하는것": "걸그룹",
+        "싫어하는것": "힘이약한거",
+        "이미지": "https://i.ibb.co/S7mS30Yn/1.png",
+        "성별": "남자",
+        "취미": "킥복싱",
+        "비밀": "초고도비만"
+      },
+      {
+        "이름": "룹희",
+        "종류": "비버",
+        "소속": "어린이집",
+        "MBTI": "ENFP",
+        "특징": "중간뚱뚱",
+        "좋아하는것": "치킨",
+        "싫어하는것": "야채",
+        "이미지": "https://i.ibb.co/S7S8GgP2/2.png",
+        "성별": "여자",
+        "취미": "권투",
+        "비밀": "고도비만"
+      },
+      {
+        "이름": "뤂이",
+        "종류": "비버",
+        "소속": "어린이집",
+        "MBTI": "ESTJ",
+        "특징": "마름",
+        "좋아하는것": "쌍절곤",
+        "싫어하는것": "마른것",
+        "이미지": "https://i.ibb.co/ycS7S99X/3.png",
+        "성별": "여자",
+        "취미": "쌍절곤",
+        "비밀": "저체중"
+      },
+      {
+        "이름": "사동",
+        "종류": "돼지",
+        "소속": "어린이집",
+        "MBTI": "ENFP",
+        "특징": "잼민이",
+        "좋아하는것": "백설이",
+        "싫어하는것": "공부",
+        "이미지": "https://i.ibb.co/C3mSN79V/5.png",
+        "성별": "남자",
+        "취미": "유튜브보기",
+        "비밀": "백설이짝사랑"
+      },
+      {
+        "이름": "야코",
+        "종류": "돼지",
+        "소속": "유치원",
+        "MBTI": "ENFP",
+        "특징": "사동이형",
+        "좋아하는것": "민초",
+        "싫어하는것": "파인애플피자",
+        "이미지": "https://i.ibb.co/S7mS30Yn/4.png",
+        "성별": "남자",
+        "취미": "민초먹기",
+        "비밀": "오이싫어"
+      },
+      {
+        "이름": "우사기",
+        "종류": "토끼",
+        "소속": "유치원",
+        "MBTI": "ISTP",
+        "특징": "누렇다",
+        "좋아하는것": "공부",
+        "싫어하는것": "바보",
+        "이미지": "https://i.ibb.co/8Lz7Y9pL/6.png",
+        "성별": "여자",
+        "취미": "공부",
+        "비밀": "공부좋아"
+      },
+      {
+        "이름": "임일후",
+        "종류": "오리",
+        "소속": "유치원",
+        "MBTI": "ENTP",
+        "특징": "입이 길다",
+        "좋아하는것": "아이돌",
+        "싫어하는것": "냄새",
+        "이미지": "https://i.ibb.co/0yS7mS30/7.png",
+        "성별": "고자",
+        "취미": "눕기",
+        "비밀": "덕질좋아"
+      },
+      {
+        "이름": "쨩구리",
+        "종류": "개구리",
+        "소속": "유치원",
+        "MBTI": "ESTP",
+        "특징": "나비넥타이를 메고있음",
+        "좋아하는것": "게임",
+        "싫어하는것": "공부",
+        "이미지": "https://i.ibb.co/L7mS30Yn/8.png",
+        "성별": "여자",
+        "취미": "개굴거리기",
+        "비밀": "게임좋아"
+      },
+      {
+        "이름": "쨩규리",
+        "종류": "개구리",
+        "소속": "유치원",
+        "MBTI": "ENFP",
+        "특징": "평범하다",
+        "좋아하는것": "놀기",
+        "싫어하는것": "시험보기",
+        "이미지": "https://i.ibb.co/R7mS30Yn/9.png",
+        "성별": "여자",
+        "취미": "장난치기",
+        "비밀": "노는게제일좋아"
+      },
+      {
+        "이름": "쨩담곰",
+        "종류": "곰",
+        "소속": "유치원",
+        "MBTI": "ISTJ",
+        "특징": "입이삐져있다",
+        "좋아하는것": "천재",
+        "싫어하는것": "바보",
+        "이미지": "https://i.ibb.co/V7mS30Yn/10.png",
+        "성별": "여자",
+        "취미": "잠자기",
+        "비밀": "나는천재"
+      },
+      {
+        "이름": "쨩만듀",
+        "종류": "반전문어",
+        "소속": "어린이집",
+        "MBTI": "ISTP",
+        "특징": "제일작다",
+        "좋아하는것": "깨끗한거",
+        "싫어하는것": "더러운거",
+        "이미지": "https://i.ibb.co/M7mS30Yn/11.png",
+        "성별": "여자",
+        "취미": "그림그리기",
+        "비밀": "작아서고민이다"
+      },
+      {
+        "이름": "쨩만쥬",
+        "종류": "반전문어",
+        "소속": "어린이집",
+        "MBTI": "ISTP",
+        "특징": "중간사이즈다",
+        "좋아하는것": "맛있는거",
+        "싫어하는것": "맛없는거",
+        "이미지": "https://i.ibb.co/kH7S30Yn/12.png",
+        "성별": "여자",
+        "취미": "먹기",
+        "비밀": "배고파"
+      },
+      {
+        "이름": "쨩무너",
+        "종류": "반전문어",
+        "소속": "어린이집",
+        "MBTI": "ISTP",
+        "특징": "쨩만쥬와사이즈가똑같다",
+        "좋아하는것": "놀기",
+        "싫어하는것": "쉬기",
+        "이미지": "https://i.ibb.co/B7mS30Yn/14.png",
+        "성별": "여자",
+        "취미": "놀기",
+        "비밀": "놀고싶어"
+      },
+      {
+        "이름": "쨩문어",
+        "종류": "반전문어",
+        "소속": "유치원",
+        "MBTI": "ENFP",
+        "특징": "제일큰문어",
+        "좋아하는것": "착한거",
+        "싫어하는것": "나쁜거",
+        "이미지": "https://i.ibb.co/P7mS30Yn/13.png",
+        "성별": "여자",
+        "취미": "노래부르기",
+        "비밀": "세젤귀"
+      },
+      {
+        "이름": "쨩빤쮸",
+        "종류": "토끼",
+        "소속": "유치원",
+        "MBTI": "ENFP",
+        "특징": "팬티만입음",
+        "좋아하는것": "팬티",
+        "싫어하는것": "추운거",
+        "이미지": "https://i.ibb.co/A7mS30Yn/15.png",
+        "성별": "여자",
+        "취미": "복싱",
+        "비밀": "팬티조아"
+      },
+      {
+        "이름": "쨩서빈",
+        "종류": "베렝구어",
+        "소속": "어린이집",
+        "MBTI": "ENFP",
+        "특징": "애기임",
+        "좋아하는것": "쪽쪽이",
+        "싫어하는것": "복싱",
+        "이미지": "https://i.ibb.co/F7mS30Yn/16.png",
+        "성별": "여자",
+        "취미": "쪽쪽이물기",
+        "비밀": "쪽쪽이..."
+      },
+      {
+        "이름": "쨩설",
+        "종류": "호랑이",
+        "소속": "유치원",
+        "MBTI": "ENFP",
+        "특징": "하얌",
+        "좋아하는것": "스키",
+        "싫어하는것": "봄",
+        "이미지": "https://i.ibb.co/G7mS30Yn/17.png",
+        "성별": "여자",
+        "취미": "태권도",
+        "비밀": "운동조아"
+      },
+      {
+        "이름": "쨩세빈",
+        "종류": "베렝구어",
+        "소속": "어린이집",
+        "MBTI": "ENFP",
+        "특징": "제일작은애기",
+        "좋아하는것": "쎈놈",
+        "싫어하는것": "약한놈",
+        "이미지": "https://i.ibb.co/H7mS30Yn/18.png",
+        "성별": "여자",
+        "취미": "은근쎔",
+        "비밀": "난쎄"
+      },
+      {
+        "이름": "쨩송",
+        "종류": "오랑우탄",
+        "소속": "유치원",
+        "MBTI": "ENFP",
+        "특징": "배가나옴",
+        "좋아하는것": "뮤지컬배우기",
+        "싫어하는것": "공연취소",
+        "이미지": "https://i.ibb.co/J7mS30Yn/19.png",
+        "성별": "여자",
+        "취미": "트롯트부르기",
+        "비밀": "노래가조아"
+      },
+      {
+        "이름": "쨩슝",
+        "종류": "오랑우탄",
+        "소속": "유치원",
+        "MBTI": "ENFP",
+        "특징": "배가나옴",
+        "좋아하는것": "리듬체조",
+        "싫어하는것": "못 먹기",
+        "이미지": "https://i.ibb.co/K7mS30Yn/20.png",
+        "성별": "여자",
+        "취미": "먹기",
+        "비밀": "먹는게제일조아"
+      },
+      {
+        "이름": "쨩크용",
+        "종류": "강아지",
+        "소속": "어린이집",
+        "MBTI": "ENFP",
+        "특징": "강아지",
+        "좋아하는것": "패기",
+        "싫어하는것": "약한놈",
+        "이미지": "https://i.ibb.co/T7mS30Yn/21.png",
+        "성별": "여자",
+        "취미": "패기",
+        "비밀": "복싱조아"
+      },
+      {
+        "이름": "치이카와",
+        "종류": "곰",
+        "소속": "유치원",
+        "MBTI": "ENFP",
+        "특징": "하얌",
+        "좋아하는것": "요쿠르트",
+        "싫어하는것": "음식 썩기",
+        "이미지": "https://i.ibb.co/X7mS30Yn/22.png",
+        "성별": "여자",
+        "취미": "요구르트 먹기",
+        "비밀": "먹기 사랑해"
+      },
+      {
+        "이름": "하치와레",
+        "종류": "고양이",
+        "소속": "유치원",
+        "MBTI": "ENFP",
+        "특징": "귀여움",
+        "좋아하는것": "귀여운거",
+        "싫어하는것": "똥",
+        "이미지": "https://i.ibb.co/Y7mS30Yn/23.png",
+        "성별": "여자",
+        "취미": "노래",
+        "비밀": "없어용"
+      }
+    ];
+
+    let allCharacters = [];
+
+    function init() {
+      allCharacters = charactersData.map(char => ({
+        name: char.이름,
+        type: char.종류,
+        group: char.소속,
+        mbti: char.MBTI,
+        feature: char.특징,
+        like: char.좋아하는것,
+        dislike: char.싫어하는것,
+        img: char.이미지,
+        gender: char.성별,
+        hobby: char.취미,
+        secret: char.비밀
+      }));
+
+      renderCharacters(allCharacters);
+
+      // Search functionality
+      document.getElementById('searchInput').addEventListener('input', (e) => {
+        const term = e.target.value.toLowerCase();
+        const filtered = allCharacters.filter(c =>
+          c.name.toLowerCase().includes(term) ||
+          c.type.toLowerCase().includes(term) ||
+          c.mbti.toLowerCase().includes(term) ||
+          c.feature.toLowerCase().includes(term)
+        );
+        renderCharacters(filtered);
+      });
+    }
+
+    function renderCharacters(charList) {
+      const kList = document.getElementById('k-list');
+      const dList = document.getElementById('d-list');
+
+      kList.innerHTML = '';
+      dList.innerHTML = '';
+
+      let kCount = 0;
+      let dCount = 0;
+
+      charList.forEach(char => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+        <div class="face-container">
+          <div class="face">
+            <img src="${char.img}" id="img-${char.name}" alt="${char.name}" onerror="this.src='https://via.placeholder.com/130?text=%EB%85%B8%20%EC%9D%B4%EB%AF%B8%EC%A7%80'">
+          </div>
+          <div class="upload-btn" onclick="triggerUpload('${char.name}')">이미지 변경</div>
+          <input type="file" id="file-${char.name}" style="display:none" accept="image/*" onchange="previewImage(event, '${char.name}')">
+        </div>
+        <div class="info-box">
+          <h3>${char.name}</h3>
+          <div class="info-text"><b>종류:</b> ${char.type}</div>
+          <div class="info-text"><b>성별:</b> ${char.gender}</div>
+          <div class="info-text"><b>MBTI:</b> ${char.mbti}</div>
+          <div class="info-text"><b>특징:</b> ${char.feature}</div>
+          <div class="info-text"><b>좋아함:</b> ${char.like}</div>
+          <div class="info-text"><b>싫어함:</b> ${char.dislike}</div>
+          <div class="info-text"><b>취미:</b> ${char.hobby}</div>
+          <div class="tag-container">
+            <span class="tag"># ${char.secret}</span>
+          </div>
+        </div>
+      `;
+
+        if (char.group === '유치원') {
+          kList.appendChild(card);
+          kCount++;
+        } else {
+          dList.appendChild(card);
+          dCount++;
+        }
+      });
+
+      // Update counts
+      const kTitle = document.querySelector('#kindergarten h2');
+      const dTitle = document.querySelector('#daycare h2');
+      if (kTitle) kTitle.textContent = `🏫 유치원 원생 (${kCount}명)`;
+      if (dTitle) dTitle.textContent = `🧸 어린이집 원생 (${dCount}명)`;
+    }
+
+    // Global handles for upload
+    window.triggerUpload = (name) => {
+      document.getElementById(`file-${name}`).click();
+    };
+
+    window.previewImage = async (event, name) => {
+      const file = event.target.files[0];
+      if (file) {
+        // 서버가 켜져 있을 때만 실제 저장이 가능합니다.
+        const formData = new FormData();
+        formData.append('charName', name);
+        formData.append('image', file);
+
+        try {
+          const response = await fetch('http://localhost:3000/upload', {
+            method: 'POST',
+            body: formData
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            // 1. 화면의 이미지를 즉시 바꿈 (새 파일 경로)
+            document.getElementById(`img-${name}`).src = data.path;
+            alert(`${name}의 사진이 images 폴더에 저장되었고, index.html 코드의 이미지 경로도 자동으로 수정되었습니다!\n\n이제 images 폴더와 index.html을 GitHub에 올리면 모바일에서도 이 사진이 보입니다.`);
+          } else {
+            throw new Error('Upload failed');
+          }
+        } catch (err) {
+          console.log('서버 오프라인: 임시 미리보기만 표시합니다.');
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            document.getElementById(`img-${name}`).src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+          alert('서버가 꺼져 있어 "임시 미리보기"로만 표시됩니다.\n실제로 저장하려면 터미널에서 npm start를 실행해 주세요.');
+        }
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+
+</body>
+
+</html>
