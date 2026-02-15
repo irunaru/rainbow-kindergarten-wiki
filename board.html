@@ -5,24 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>무지개 유치원 이야기판</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
       padding: 20px;
     }
-
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
+    .container { max-width: 900px; margin: 0 auto; }
     .header {
       background: white;
       border-radius: 16px;
@@ -31,7 +21,6 @@
       box-shadow: 0 10px 30px rgba(0,0,0,0.2);
       text-align: center;
     }
-
     .header h1 {
       font-size: 2em;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -39,12 +28,7 @@
       -webkit-text-fill-color: transparent;
       margin-bottom: 10px;
     }
-
-    .header p {
-      color: #666;
-      font-size: 0.95em;
-    }
-
+    .header p { color: #666; font-size: 0.95em; }
     .header .back-link {
       display: inline-block;
       margin-top: 15px;
@@ -56,12 +40,7 @@
       font-size: 0.9em;
       transition: all 0.3s;
     }
-
-    .header .back-link:hover {
-      background: #667eea;
-      color: white;
-    }
-
+    .header .back-link:hover { background: #667eea; color: white; }
     .card {
       background: white;
       border-radius: 16px;
@@ -69,29 +48,10 @@
       margin-bottom: 20px;
       box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     }
-
-    .nickname-setup {
-      text-align: center;
-    }
-
-    .nickname-setup h2 {
-      color: #333;
-      margin-bottom: 15px;
-      font-size: 1.4em;
-    }
-
-    .nickname-setup p {
-      color: #666;
-      margin-bottom: 20px;
-    }
-
-    .input-group {
-      display: flex;
-      gap: 10px;
-      max-width: 400px;
-      margin: 0 auto;
-    }
-
+    .nickname-setup { text-align: center; }
+    .nickname-setup h2 { color: #333; margin-bottom: 15px; font-size: 1.4em; }
+    .nickname-setup p { color: #666; margin-bottom: 20px; }
+    .input-group { display: flex; gap: 10px; max-width: 400px; margin: 0 auto; }
     input[type="text"], textarea {
       flex: 1;
       padding: 12px 16px;
@@ -101,18 +61,8 @@
       transition: border 0.3s;
       font-family: inherit;
     }
-
-    input[type="text"]:focus, textarea:focus {
-      outline: none;
-      border-color: #667eea;
-    }
-
-    textarea {
-      width: 100%;
-      min-height: 100px;
-      resize: vertical;
-    }
-
+    input[type="text"]:focus, textarea:focus { outline: none; border-color: #667eea; }
+    textarea { width: 100%; min-height: 100px; resize: vertical; }
     .btn {
       padding: 12px 24px;
       border: none;
@@ -123,30 +73,14 @@
       transition: all 0.3s;
       font-family: inherit;
     }
-
     .btn-primary {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
     }
-
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-    }
-
-    .btn-secondary {
-      background: #f0f0f0;
-      color: #666;
-    }
-
-    .btn-secondary:hover {
-      background: #e0e0e0;
-    }
-
-    .write-section {
-      margin-bottom: 20px;
-    }
-
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4); }
+    .btn-secondary { background: #f0f0f0; color: #666; }
+    .btn-secondary:hover { background: #e0e0e0; }
+    .write-section { margin-bottom: 20px; }
     .write-section h3 {
       color: #333;
       margin-bottom: 15px;
@@ -154,30 +88,10 @@
       align-items: center;
       gap: 10px;
     }
-
-    .write-section .user-info {
-      font-size: 0.9em;
-      color: #667eea;
-      font-weight: normal;
-    }
-
-    .form-group {
-      margin-bottom: 15px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 8px;
-      color: #555;
-      font-weight: 600;
-    }
-
-    .posts-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
+    .write-section .user-info { font-size: 0.9em; color: #667eea; font-weight: normal; }
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; margin-bottom: 8px; color: #555; font-weight: 600; }
+    .posts-list { display: flex; flex-direction: column; gap: 12px; }
     .post-item {
       padding: 18px;
       background: #f8f9fa;
@@ -186,48 +100,13 @@
       transition: all 0.3s;
       border-left: 4px solid transparent;
     }
-
-    .post-item:hover {
-      background: #f0f0ff;
-      border-left-color: #667eea;
-      transform: translateX(4px);
-    }
-
-    .post-item h4 {
-      color: #333;
-      margin-bottom: 8px;
-      font-size: 1.1em;
-    }
-
-    .post-meta {
-      display: flex;
-      gap: 15px;
-      font-size: 0.85em;
-      color: #999;
-    }
-
-    .post-meta span {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .post-detail {
-      padding: 20px;
-    }
-
-    .post-detail .post-header {
-      border-bottom: 2px solid #f0f0f0;
-      padding-bottom: 15px;
-      margin-bottom: 20px;
-    }
-
-    .post-detail h3 {
-      color: #333;
-      margin-bottom: 10px;
-      font-size: 1.5em;
-    }
-
+    .post-item:hover { background: #f0f0ff; border-left-color: #667eea; transform: translateX(4px); }
+    .post-item h4 { color: #333; margin-bottom: 8px; font-size: 1.1em; }
+    .post-meta { display: flex; gap: 15px; font-size: 0.85em; color: #999; }
+    .post-meta span { display: flex; align-items: center; gap: 4px; }
+    .post-detail { padding: 20px; }
+    .post-detail .post-header { border-bottom: 2px solid #f0f0f0; padding-bottom: 15px; margin-bottom: 20px; }
+    .post-detail h3 { color: #333; margin-bottom: 10px; font-size: 1.5em; }
     .post-detail .post-body {
       color: #555;
       line-height: 1.8;
@@ -237,38 +116,11 @@
       background: #f8f9fa;
       border-radius: 10px;
     }
-
-    .comments-section h4 {
-      color: #333;
-      margin-bottom: 15px;
-      padding-bottom: 10px;
-      border-bottom: 2px solid #f0f0f0;
-    }
-
-    .comment-item {
-      padding: 15px;
-      background: #f8f9fa;
-      border-radius: 8px;
-      margin-bottom: 10px;
-    }
-
-    .comment-item .comment-meta {
-      font-size: 0.85em;
-      color: #999;
-      margin-bottom: 8px;
-    }
-
-    .comment-item .comment-body {
-      color: #555;
-      line-height: 1.6;
-    }
-
-    .comment-form {
-      margin-top: 20px;
-      padding-top: 20px;
-      border-top: 2px solid #f0f0f0;
-    }
-
+    .comments-section h4 { color: #333; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #f0f0f0; }
+    .comment-item { padding: 15px; background: #f8f9fa; border-radius: 8px; margin-bottom: 10px; }
+    .comment-item .comment-meta { font-size: 0.85em; color: #999; margin-bottom: 8px; }
+    .comment-item .comment-body { color: #555; line-height: 1.6; }
+    .comment-form { margin-top: 20px; padding-top: 20px; border-top: 2px solid #f0f0f0; }
     .error-msg {
       background: #ffe0e0;
       color: #cc0000;
@@ -277,7 +129,6 @@
       margin-bottom: 15px;
       text-align: center;
     }
-
     .success-msg {
       background: #e0ffe0;
       color: #008800;
@@ -286,46 +137,14 @@
       margin-bottom: 15px;
       text-align: center;
     }
-
-    .loading {
-      text-align: center;
-      color: #999;
-      padding: 40px;
-    }
-
-    .empty-state {
-      text-align: center;
-      color: #999;
-      padding: 40px;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    .actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 20px;
-    }
-
+    .loading { text-align: center; color: #999; padding: 40px; }
+    .empty-state { text-align: center; color: #999; padding: 40px; }
+    .hidden { display: none; }
     @media (max-width: 600px) {
-      body {
-        padding: 10px;
-      }
-
-      .header h1 {
-        font-size: 1.5em;
-      }
-
-      .input-group {
-        flex-direction: column;
-      }
-
-      .post-meta {
-        flex-direction: column;
-        gap: 5px;
-      }
+      body { padding: 10px; }
+      .header h1 { font-size: 1.5em; }
+      .input-group { flex-direction: column; }
+      .post-meta { flex-direction: column; gap: 5px; }
     }
   </style>
 </head>
@@ -337,7 +156,6 @@
       <a href="https://irunaru.github.io/rainbow-kindergarten-wiki/" class="back-link">← 홈으로 돌아가기</a>
     </div>
 
-    <!-- 닉네임 설정 -->
     <div id="nicknameSetup" class="card nickname-setup hidden">
       <h2>닉네임을 입력해주세요</h2>
       <p>글을 쓰려면 닉네임이 필요해요</p>
@@ -348,12 +166,8 @@
       </div>
     </div>
 
-    <!-- 글쓰기 영역 -->
     <div id="writeSection" class="card write-section hidden">
-      <h3>
-        새 글쓰기
-        <span class="user-info" id="currentUser"></span>
-      </h3>
+      <h3>새 글쓰기 <span class="user-info" id="currentUser"></span></h3>
       <div id="writeError" class="error-msg hidden"></div>
       <div class="form-group">
         <label for="postTitle">제목</label>
@@ -366,14 +180,12 @@
       <button class="btn btn-primary" onclick="createPost()">글쓰기</button>
     </div>
 
-    <!-- 글 목록 -->
     <div id="postsSection" class="card">
       <h3>이야기 목록</h3>
       <div id="postsError" class="error-msg hidden"></div>
       <div id="postsList" class="loading">불러오는 중...</div>
     </div>
 
-    <!-- 글 상세보기 -->
     <div id="postDetail" class="card hidden">
       <div class="post-detail">
         <button class="btn btn-secondary" onclick="showPostsList()">← 목록으로</button>
@@ -385,11 +197,9 @@
           </div>
         </div>
         <div class="post-body" id="detailBody"></div>
-
         <div class="comments-section">
           <h4>댓글 <span id="commentCount"></span></h4>
           <div id="commentsList"></div>
-
           <div class="comment-form">
             <div id="commentError" class="error-msg hidden"></div>
             <textarea id="commentBody" placeholder="댓글을 입력하세요 (1-1000자)" maxlength="1000"></textarea>
@@ -406,51 +216,46 @@
     let currentNickname = null;
     let currentPostId = null;
 
-    // 초기화
-    async function init() {
-      try {
-        const response = await fetch(`${API_URL}/api/v1/guest/init`, {
-          method: 'POST',
-          credentials: 'include'
-        });
-        const data = await response.json();
-        
-        if (data.ok) {
-          currentGuestId = data.guest_id;
-          
-          if (!data.has_nickname) {
-            document.getElementById('nicknameSetup').classList.remove('hidden');
-          } else {
-            await loadUserInfo();
-          }
-        }
-      } catch (error) {
-        console.error('Init error:', error);
-      }
+    function saveGuestInfo(guestId, nickname) {
+      localStorage.setItem('bbs_guest_id', guestId);
+      if (nickname) localStorage.setItem('bbs_nickname', nickname);
+    }
 
+    function getGuestInfo() {
+      return {
+        guestId: localStorage.getItem('bbs_guest_id'),
+        nickname: localStorage.getItem('bbs_nickname')
+      };
+    }
+
+    async function init() {
+      const stored = getGuestInfo();
+      
+      if (stored.guestId) {
+        currentGuestId = stored.guestId;
+        if (stored.nickname) {
+          currentNickname = stored.nickname;
+          document.getElementById('currentUser').textContent = `(${currentNickname})`;
+          document.getElementById('writeSection').classList.remove('hidden');
+        } else {
+          document.getElementById('nicknameSetup').classList.remove('hidden');
+        }
+      } else {
+        try {
+          const response = await fetch(`${API_URL}/api/v1/guest/init`, { method: 'POST' });
+          const data = await response.json();
+          if (data.ok) {
+            currentGuestId = data.guest_id;
+            saveGuestInfo(currentGuestId);
+            document.getElementById('nicknameSetup').classList.remove('hidden');
+          }
+        } catch (error) {
+          console.error('Init error:', error);
+        }
+      }
       loadPosts();
     }
 
-    // 사용자 정보 로드
-    async function loadUserInfo() {
-      try {
-        const response = await fetch(`${API_URL}/api/v1/me`, {
-          credentials: 'include'
-        });
-        const data = await response.json();
-        
-        if (data.ok && data.guest) {
-          currentNickname = data.guest.nickname;
-          document.getElementById('currentUser').textContent = `(${currentNickname})`;
-          document.getElementById('writeSection').classList.remove('hidden');
-          document.getElementById('nicknameSetup').classList.add('hidden');
-        }
-      } catch (error) {
-        console.error('Load user info error:', error);
-      }
-    }
-
-    // 닉네임 설정
     async function setNickname() {
       const nickname = document.getElementById('nicknameInput').value.trim();
       const errorEl = document.getElementById('nicknameError');
@@ -464,15 +269,17 @@
       try {
         const response = await fetch(`${API_URL}/api/v1/guest/nickname`, {
           method: 'POST',
-          credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nickname })
+          body: JSON.stringify({ nickname, guest_id: currentGuestId })
         });
 
         const data = await response.json();
-
         if (data.ok) {
-          await loadUserInfo();
+          currentNickname = nickname;
+          saveGuestInfo(currentGuestId, nickname);
+          document.getElementById('currentUser').textContent = `(${currentNickname})`;
+          document.getElementById('writeSection').classList.remove('hidden');
+          document.getElementById('nicknameSetup').classList.add('hidden');
           errorEl.classList.add('hidden');
         } else {
           errorEl.textContent = getErrorMessage(data.error);
@@ -484,14 +291,11 @@
       }
     }
 
-    // 글 목록 로드
     async function loadPosts() {
       const listEl = document.getElementById('postsList');
-      
       try {
         const response = await fetch(`${API_URL}/api/v1/boards/classroom/posts?limit=20`);
         const data = await response.json();
-
         if (data.ok && data.posts.length > 0) {
           listEl.innerHTML = data.posts.map(post => `
             <div class="post-item" onclick="showPost(${post.id})">
@@ -510,7 +314,6 @@
       }
     }
 
-    // 글 작성
     async function createPost() {
       const title = document.getElementById('postTitle').value.trim();
       const body = document.getElementById('postBody').value.trim();
@@ -525,13 +328,11 @@
       try {
         const response = await fetch(`${API_URL}/api/v1/posts`, {
           method: 'POST',
-          credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ title, body, content_type: 'story' })
+          body: JSON.stringify({ title, body, content_type: 'story', guest_id: currentGuestId })
         });
 
         const data = await response.json();
-
         if (data.ok) {
           document.getElementById('postTitle').value = '';
           document.getElementById('postBody').value = '';
@@ -548,25 +349,19 @@
       }
     }
 
-    // 글 상세보기
     async function showPost(postId) {
       currentPostId = postId;
-      
       try {
         const response = await fetch(`${API_URL}/api/v1/posts/${postId}`);
         const data = await response.json();
-
         if (data.ok) {
           document.getElementById('postsSection').classList.add('hidden');
           document.getElementById('writeSection').classList.add('hidden');
           document.getElementById('postDetail').classList.remove('hidden');
-
           document.getElementById('detailTitle').textContent = data.post.title;
           document.getElementById('detailDate').textContent = '📅 ' + formatDate(data.post.created_at);
           document.getElementById('detailCommentCount').textContent = `💬 ${data.comments.length}개`;
           document.getElementById('detailBody').textContent = data.post.body;
-
-          // 댓글 표시
           const commentsEl = document.getElementById('commentsList');
           if (data.comments.length > 0) {
             commentsEl.innerHTML = data.comments.map(comment => `
@@ -584,7 +379,6 @@
       }
     }
 
-    // 댓글 작성
     async function createComment() {
       const body = document.getElementById('commentBody').value.trim();
       const errorEl = document.getElementById('commentError');
@@ -603,17 +397,15 @@
       try {
         const response = await fetch(`${API_URL}/api/v1/posts/${currentPostId}/comments`, {
           method: 'POST',
-          credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ body })
+          body: JSON.stringify({ body, guest_id: currentGuestId })
         });
 
         const data = await response.json();
-
         if (data.ok) {
           document.getElementById('commentBody').value = '';
           errorEl.classList.add('hidden');
-          showPost(currentPostId); // 새로고침
+          showPost(currentPostId);
         } else {
           errorEl.textContent = getErrorMessage(data.error);
           errorEl.classList.remove('hidden');
@@ -624,17 +416,13 @@
       }
     }
 
-    // 목록으로 돌아가기
     function showPostsList() {
       document.getElementById('postDetail').classList.add('hidden');
       document.getElementById('postsSection').classList.remove('hidden');
-      if (currentNickname) {
-        document.getElementById('writeSection').classList.remove('hidden');
-      }
+      if (currentNickname) document.getElementById('writeSection').classList.remove('hidden');
       currentPostId = null;
     }
 
-    // 유틸리티 함수
     function formatDate(dateString) {
       const date = new Date(dateString);
       const now = new Date();
@@ -642,12 +430,10 @@
       const minutes = Math.floor(diff / 60000);
       const hours = Math.floor(diff / 3600000);
       const days = Math.floor(diff / 86400000);
-
       if (minutes < 1) return '방금 전';
       if (minutes < 60) return `${minutes}분 전`;
       if (hours < 24) return `${hours}시간 전`;
       if (days < 7) return `${days}일 전`;
-      
       return date.toLocaleDateString('ko-KR');
     }
 
@@ -674,7 +460,6 @@
       return messages[error] || '오류가 발생했습니다';
     }
 
-    // 페이지 로드 시 초기화
     init();
   </script>
 </body>
