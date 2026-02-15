@@ -91,36 +91,105 @@
     .write-section .user-info { font-size: 0.9em; color: #667eea; font-weight: normal; }
     .form-group { margin-bottom: 15px; }
     .form-group label { display: block; margin-bottom: 8px; color: #555; font-weight: 600; }
-    .posts-list { display: flex; flex-direction: column; gap: 12px; }
+    
+    /* 아코디언 스타일 게시글 */
     .post-item {
+      margin-bottom: 12px;
+      border-radius: 12px;
+      overflow: hidden;
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: all 0.3s;
+    }
+    .post-item.expanded {
+      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+    }
+    .post-header-clickable {
       padding: 18px;
-      background: #f8f9fa;
-      border-radius: 10px;
       cursor: pointer;
       transition: all 0.3s;
       border-left: 4px solid transparent;
     }
-    .post-item:hover { background: #f0f0ff; border-left-color: #667eea; transform: translateX(4px); }
-    .post-item h4 { color: #333; margin-bottom: 8px; font-size: 1.1em; }
-    .post-meta { display: flex; gap: 15px; font-size: 0.85em; color: #999; }
+    .post-header-clickable:hover {
+      background: #f8f9fa;
+      border-left-color: #667eea;
+    }
+    .post-item.expanded .post-header-clickable {
+      background: #f0f0ff;
+      border-left-color: #667eea;
+    }
+    .post-title {
+      color: #333;
+      margin-bottom: 8px;
+      font-size: 1.1em;
+      font-weight: 600;
+    }
+    .post-meta {
+      display: flex;
+      gap: 15px;
+      font-size: 0.85em;
+      color: #999;
+    }
     .post-meta span { display: flex; align-items: center; gap: 4px; }
-    .post-detail { padding: 20px; }
-    .post-detail .post-header { border-bottom: 2px solid #f0f0f0; padding-bottom: 15px; margin-bottom: 20px; }
-    .post-detail h3 { color: #333; margin-bottom: 10px; font-size: 1.5em; }
-    .post-detail .post-body {
+    
+    /* 펼쳐진 내용 */
+    .post-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out;
+    }
+    .post-item.expanded .post-content {
+      max-height: 5000px;
+      transition: max-height 0.5s ease-in;
+    }
+    .post-body {
+      padding: 20px;
       color: #555;
       line-height: 1.8;
-      margin-bottom: 30px;
       white-space: pre-wrap;
-      padding: 20px;
       background: #f8f9fa;
-      border-radius: 10px;
+      margin: 0 18px 18px 18px;
+      border-radius: 8px;
     }
-    .comments-section h4 { color: #333; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #f0f0f0; }
-    .comment-item { padding: 15px; background: #f8f9fa; border-radius: 8px; margin-bottom: 10px; }
-    .comment-item .comment-meta { font-size: 0.85em; color: #999; margin-bottom: 8px; }
-    .comment-item .comment-body { color: #555; line-height: 1.6; }
-    .comment-form { margin-top: 20px; padding-top: 20px; border-top: 2px solid #f0f0f0; }
+    
+    /* 댓글 섹션 */
+    .comments-section {
+      padding: 0 18px 18px 18px;
+    }
+    .comments-header {
+      color: #333;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+      font-size: 1.1em;
+      font-weight: 600;
+    }
+    .comment-item {
+      padding: 15px;
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+    .comment-meta {
+      font-size: 0.85em;
+      color: #999;
+      margin-bottom: 8px;
+    }
+    .comment-body {
+      color: #555;
+      line-height: 1.6;
+    }
+    .comment-form {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 2px solid #f0f0f0;
+    }
+    .comment-form textarea {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    
     .error-msg {
       background: #ffe0e0;
       color: #cc0000;
@@ -129,17 +198,10 @@
       margin-bottom: 15px;
       text-align: center;
     }
-    .success-msg {
-      background: #e0ffe0;
-      color: #008800;
-      padding: 12px;
-      border-radius: 8px;
-      margin-bottom: 15px;
-      text-align: center;
-    }
     .loading { text-align: center; color: #999; padding: 40px; }
     .empty-state { text-align: center; color: #999; padding: 40px; }
     .hidden { display: none; }
+    
     @media (max-width: 600px) {
       body { padding: 10px; }
       .header h1 { font-size: 1.5em; }
@@ -185,36 +247,13 @@
       <div id="postsError" class="error-msg hidden"></div>
       <div id="postsList" class="loading">불러오는 중...</div>
     </div>
-
-    <div id="postDetail" class="card hidden">
-      <div class="post-detail">
-        <button class="btn btn-secondary" onclick="showPostsList()">← 목록으로</button>
-        <div class="post-header">
-          <h3 id="detailTitle"></h3>
-          <div class="post-meta">
-            <span id="detailDate"></span>
-            <span id="detailCommentCount"></span>
-          </div>
-        </div>
-        <div class="post-body" id="detailBody"></div>
-        <div class="comments-section">
-          <h4>댓글 <span id="commentCount"></span></h4>
-          <div id="commentsList"></div>
-          <div class="comment-form">
-            <div id="commentError" class="error-msg hidden"></div>
-            <textarea id="commentBody" placeholder="댓글을 입력하세요 (1-1000자)" maxlength="1000"></textarea>
-            <button class="btn btn-primary" onclick="createComment()" style="margin-top: 10px;">댓글 쓰기</button>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 
   <script>
     const API_URL = 'https://rainbow-bbs-api.irunaru.workers.dev';
     let currentGuestId = null;
     let currentNickname = null;
-    let currentPostId = null;
+    let expandedPostId = null;
 
     function saveGuestInfo(guestId, nickname) {
       localStorage.setItem('bbs_guest_id', guestId);
@@ -294,15 +333,29 @@
     async function loadPosts() {
       const listEl = document.getElementById('postsList');
       try {
-        const response = await fetch(`${API_URL}/api/v1/boards/classroom/posts?limit=20`);
+        const response = await fetch(`${API_URL}/api/v1/boards/classroom/posts?limit=50`);
         const data = await response.json();
         if (data.ok && data.posts.length > 0) {
           listEl.innerHTML = data.posts.map(post => `
-            <div class="post-item" onclick="showPost(${post.id})">
-              <h4>${escapeHtml(post.title)}</h4>
-              <div class="post-meta">
-                <span>📅 ${formatDate(post.created_at)}</span>
-                <span>💬 ${post.comment_count}개</span>
+            <div class="post-item" id="post-${post.id}">
+              <div class="post-header-clickable" onclick="togglePost(${post.id})">
+                <div class="post-title">${escapeHtml(post.title)}</div>
+                <div class="post-meta">
+                  <span>📅 ${formatDate(post.created_at)}</span>
+                  <span>💬 ${post.comment_count}개</span>
+                </div>
+              </div>
+              <div class="post-content">
+                <div class="post-body" id="post-body-${post.id}">불러오는 중...</div>
+                <div class="comments-section">
+                  <div class="comments-header">댓글 <span id="comment-count-${post.id}"></span></div>
+                  <div id="comments-${post.id}"></div>
+                  <div class="comment-form">
+                    <div id="comment-error-${post.id}" class="error-msg hidden"></div>
+                    <textarea id="comment-input-${post.id}" placeholder="댓글을 입력하세요 (1-1000자)" maxlength="1000"></textarea>
+                    <button class="btn btn-primary" onclick="createComment(${post.id})">댓글 쓰기</button>
+                  </div>
+                </div>
               </div>
             </div>
           `).join('');
@@ -311,6 +364,53 @@
         }
       } catch (error) {
         listEl.innerHTML = '<div class="error-msg">글 목록을 불러올 수 없습니다</div>';
+      }
+    }
+
+    async function togglePost(postId) {
+      const postEl = document.getElementById(`post-${postId}`);
+      const isExpanded = postEl.classList.contains('expanded');
+      
+      // 다른 글 접기
+      document.querySelectorAll('.post-item.expanded').forEach(el => {
+        if (el.id !== `post-${postId}`) {
+          el.classList.remove('expanded');
+        }
+      });
+      
+      if (isExpanded) {
+        postEl.classList.remove('expanded');
+        expandedPostId = null;
+      } else {
+        postEl.classList.add('expanded');
+        expandedPostId = postId;
+        await loadPostDetail(postId);
+      }
+    }
+
+    async function loadPostDetail(postId) {
+      try {
+        const response = await fetch(`${API_URL}/api/v1/posts/${postId}`);
+        const data = await response.json();
+        
+        if (data.ok) {
+          document.getElementById(`post-body-${postId}`).textContent = data.post.body;
+          document.getElementById(`comment-count-${postId}`).textContent = data.comments.length;
+          
+          const commentsEl = document.getElementById(`comments-${postId}`);
+          if (data.comments.length > 0) {
+            commentsEl.innerHTML = data.comments.map(comment => `
+              <div class="comment-item">
+                <div class="comment-meta">📅 ${formatDate(comment.created_at)}</div>
+                <div class="comment-body">${escapeHtml(comment.body)}</div>
+              </div>
+            `).join('');
+          } else {
+            commentsEl.innerHTML = '<div class="empty-state">첫 댓글을 남겨보세요!</div>';
+          }
+        }
+      } catch (error) {
+        console.error('Load post error:', error);
       }
     }
 
@@ -337,7 +437,7 @@
           document.getElementById('postTitle').value = '';
           document.getElementById('postBody').value = '';
           errorEl.classList.add('hidden');
-          loadPosts();
+          await loadPosts();
           alert('글이 등록되었습니다!');
         } else {
           errorEl.textContent = getErrorMessage(data.error);
@@ -349,39 +449,9 @@
       }
     }
 
-    async function showPost(postId) {
-      currentPostId = postId;
-      try {
-        const response = await fetch(`${API_URL}/api/v1/posts/${postId}`);
-        const data = await response.json();
-        if (data.ok) {
-          document.getElementById('postsSection').classList.add('hidden');
-          document.getElementById('writeSection').classList.add('hidden');
-          document.getElementById('postDetail').classList.remove('hidden');
-          document.getElementById('detailTitle').textContent = data.post.title;
-          document.getElementById('detailDate').textContent = '📅 ' + formatDate(data.post.created_at);
-          document.getElementById('detailCommentCount').textContent = `💬 ${data.comments.length}개`;
-          document.getElementById('detailBody').textContent = data.post.body;
-          const commentsEl = document.getElementById('commentsList');
-          if (data.comments.length > 0) {
-            commentsEl.innerHTML = data.comments.map(comment => `
-              <div class="comment-item">
-                <div class="comment-meta">📅 ${formatDate(comment.created_at)}</div>
-                <div class="comment-body">${escapeHtml(comment.body)}</div>
-              </div>
-            `).join('');
-          } else {
-            commentsEl.innerHTML = '<div class="empty-state">첫 댓글을 남겨보세요!</div>';
-          }
-        }
-      } catch (error) {
-        alert('글을 불러올 수 없습니다');
-      }
-    }
-
-    async function createComment() {
-      const body = document.getElementById('commentBody').value.trim();
-      const errorEl = document.getElementById('commentError');
+    async function createComment(postId) {
+      const body = document.getElementById(`comment-input-${postId}`).value.trim();
+      const errorEl = document.getElementById(`comment-error-${postId}`);
 
       if (!body) {
         errorEl.textContent = '댓글 내용을 입력해주세요';
@@ -395,7 +465,7 @@
       }
 
       try {
-        const response = await fetch(`${API_URL}/api/v1/posts/${currentPostId}/comments`, {
+        const response = await fetch(`${API_URL}/api/v1/posts/${postId}/comments`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ body, guest_id: currentGuestId })
@@ -403,9 +473,9 @@
 
         const data = await response.json();
         if (data.ok) {
-          document.getElementById('commentBody').value = '';
+          document.getElementById(`comment-input-${postId}`).value = '';
           errorEl.classList.add('hidden');
-          showPost(currentPostId);
+          await loadPostDetail(postId);
         } else {
           errorEl.textContent = getErrorMessage(data.error);
           errorEl.classList.remove('hidden');
@@ -414,13 +484,6 @@
         errorEl.textContent = '오류가 발생했습니다';
         errorEl.classList.remove('hidden');
       }
-    }
-
-    function showPostsList() {
-      document.getElementById('postDetail').classList.add('hidden');
-      document.getElementById('postsSection').classList.remove('hidden');
-      if (currentNickname) document.getElementById('writeSection').classList.remove('hidden');
-      currentPostId = null;
     }
 
     function formatDate(dateString) {
