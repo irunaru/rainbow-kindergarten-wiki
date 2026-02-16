@@ -1,233 +1,569 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>우리반 이야기판 🌈</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>무지개 유치원 BBS</title>
   <style>
-    :root { --main: #FFB7B2; --bg: #FFF9C4; --card: #FFFFFF; --text: #5D4037; }
-    body { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 80px; line-height: 1.6; }
-    header { background: var(--main); color: white; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 10; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-    .container { max-width: 500px; margin: 0 auto; padding: 15px; }
-    .card { background: var(--card); border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 2px solid transparent; }
-    .post-meta { font-size: 0.85rem; color: #888; margin-bottom: 8px; display: flex; justify-content: space-between; }
-    .post-body { font-size: 1.1rem; white-space: pre-wrap; }
-    input, textarea { width: 100%; border: 2px solid #eee; border-radius: 10px; padding: 12px; font-size: 1rem; box-sizing: border-box; margin-bottom: 10px; font-family: inherit; }
-    button { background: var(--main); color: white; border: none; padding: 12px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; font-size: 1rem; }
-    button:active { opacity: 0.8; }
-    .nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #eee; z-index: 10; }
-    .nav-btn { flex: 1; text-align: center; padding: 15px; cursor: pointer; font-size: 1.1rem; transition: background 0.2s; }
-    .nav-btn:hover { background: #fff5f5; }
-    
-    /* 모달 */
-    #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(3px); }
-    .modal-content { background: white; padding: 30px; border-radius: 20px; width: 85%; max-width: 400px; text-align: center; }
-    
-    /* 댓글 스타일 */
-    .comment-list { margin-top: 20px; background: #fffdf0; border-radius: 10px; padding: 10px; }
-    .comment-item { padding: 10px; border-bottom: 1px solid #eee; }
-    .comment-item:last-child { border-bottom: none; }
-    .comment-author { font-weight: bold; color: #FF8A80; font-size: 0.9rem; }
-    .comment-body { font-size: 0.95rem; margin-top: 3px; }
+    body { font-family: system-ui, -apple-system, sans-serif; margin: 0; background:#f6f6f6; }
+    header { position: sticky; top:0; background:#fff; padding:12px 14px; border-bottom:1px solid #ddd; display:flex; gap:10px; align-items:center; }
+    header .title { font-weight:700; }
+    header .spacer { flex:1; }
+    header button { border:1px solid #ccc; background:#fff; border-radius:10px; padding:8px 10px; }
+    main { padding: 14px; max-width: 820px; margin: 0 auto; }
+    .tabs { display:flex; gap:8px; margin:10px 0 14px; }
+    .tab { padding:8px 10px; border-radius:999px; border:1px solid #ddd; background:#fff; cursor:pointer; }
+    .tab.active { border-color:#333; }
+    .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap:12px; }
+    .card { background:#fff; border:1px solid #e3e3e3; border-radius:14px; padding:10px; text-align:center; cursor:pointer; }
+    .avatar { width:64px; height:64px; border-radius:50%; object-fit:cover; background:#eee; margin:0 auto 8px; }
+    .badge { font-size:12px; opacity:.7; }
+    .list { display:flex; flex-direction:column; gap:10px; }
+    .item { background:#fff; border:1px solid #e3e3e3; border-radius:14px; padding:12px; cursor:pointer; }
+    .meta { display:flex; gap:10px; font-size:12px; opacity:.7; margin-top:6px; }
+    .btnPrimary { border:0; background:#111; color:#fff; border-radius:12px; padding:10px 12px; }
+    .row { display:flex; gap:10px; align-items:center; }
+    .modal { position:fixed; inset:0; background:rgba(0,0,0,.45); display:none; align-items:center; justify-content:center; padding:14px; }
+    .modal .box { background:#fff; border-radius:16px; padding:14px; width:min(420px, 100%); border:1px solid #ddd; }
+    .modal input, .modal textarea { width:100%; box-sizing:border-box; padding:10px; border-radius:12px; border:1px solid #ccc; margin:8px 0; }
+    .modal textarea { min-height:120px; }
+    .hint { font-size:12px; opacity:.7; }
+    .danger { color:#b00020; font-size:12px; }
   </style>
 </head>
 <body>
+  <header>
+    <div class="title" id="hdrTitle">무지개 유치원</div>
+    <div class="spacer"></div>
+    <button id="meBtn">이름표</button>
+  </header>
 
-<header><h2 id="title">우리반 이야기판</h2></header>
+  <main>
+    <div class="tabs">
+      <div class="tab" id="tabHome">캐릭터</div>
+      <div class="tab" id="tabFree">자유게시판</div>
+    </div>
 
-<div class="container" id="app">불러오는 중...</div>
+    <div id="view"></div>
+  </main>
 
-<div class="nav">
-  <div class="nav-btn" onclick="location.hash='#home'">🏡 홈</div>
-  <div class="nav-btn" onclick="location.hash='#free'">📢 게시판</div>
-</div>
-
-<div id="modal">
-  <div class="modal-content">
-    <h3 style="margin-top:0">📛 이름표 만들기</h3>
-    <p>우리반 친구들이 알아볼 수 있게<br>이름을 적어주세요!</p>
-    <input type="text" id="nick-input" placeholder="예: 무지개기린">
-    <button onclick="saveNickname()">교실 입장!</button>
+  <!-- Nickname modal -->
+  <div class="modal" id="nickModal">
+    <div class="box">
+      <div style="font-weight:700;">이름표 붙이기</div>
+      <div class="hint">교실에서 부를 이름을 적어줘 (2~12자)</div>
+      <input id="nickInput" placeholder="예: 빨강이친구" />
+      <div class="row">
+        <button class="btnPrimary" id="nickSave">저장</button>
+        <button id="nickCancel">취소</button>
+      </div>
+      <div class="danger" id="nickErr" style="display:none;"></div>
+    </div>
   </div>
-</div>
+
+  <!-- Admin key modal -->
+  <div class="modal" id="adminModal">
+    <div class="box">
+      <div style="font-weight:700;">관리자 모드</div>
+      <div class="hint">관리자 키를 입력하세요 (이 탭에서만 유지)</div>
+      <input id="adminKeyInput" placeholder="ADMIN_KEY" />
+      <div class="row">
+        <button class="btnPrimary" id="adminKeySave">활성화</button>
+        <button id="adminKeyCancel">닫기</button>
+      </div>
+      <div class="danger" id="adminErr" style="display:none;"></div>
+    </div>
+  </div>
+
+  <!-- Compose modal (free post or character post) -->
+  <div class="modal" id="composeModal">
+    <div class="box">
+      <div style="font-weight:700;" id="composeTitle">글쓰기</div>
+      <div id="composeCharRow" style="display:none;">
+        <div class="hint">캐릭터 선택</div>
+        <input id="composeCharId" placeholder="예: kid-red" />
+      </div>
+      <input id="composePostTitle" placeholder="제목" />
+      <textarea id="composePostBody" placeholder="내용"></textarea>
+      <div class="row">
+        <button class="btnPrimary" id="composeSubmit">등록</button>
+        <button id="composeCancel">취소</button>
+      </div>
+      <div class="danger" id="composeErr" style="display:none;"></div>
+    </div>
+  </div>
 
 <script>
-  // [1] 본인의 API 주소 (끝에 /api/v1을 붙여 경로를 단순화합니다)
-  const API_URL = "https://rainbow-bbs-api.irunaru.workers.dev/api/v1";
-  
-  let myNick = localStorage.getItem('bbs_nick');
-  let myGid = localStorage.getItem('bbs_gid') || crypto.randomUUID();
+(() => {
+  // ===== CONFIG =====
+  const API = "https://rainbow-bbs-api.irunaru.workers.dev";
+  // ==================
 
-  // 앱 시작
-  async function init() {
-    if (!myNick) {
-      document.getElementById('modal').style.display = 'flex';
-    } else {
-      localStorage.setItem('bbs_gid', myGid);
-      window.onhashchange = router;
-      router();
+  // admin key only in-memory (tab session)
+  let ADMIN_KEY = null;
+
+  const el = (id) => document.getElementById(id);
+  const view = el("view");
+  const hdrTitle = el("hdrTitle");
+
+  const nickModal = el("nickModal");
+  const nickInput = el("nickInput");
+  const nickErr = el("nickErr");
+
+  const adminModal = el("adminModal");
+  const adminKeyInput = el("adminKeyInput");
+  const adminErr = el("adminErr");
+
+  const composeModal = el("composeModal");
+  const composeTitle = el("composeTitle");
+  const composeCharRow = el("composeCharRow");
+  const composeCharId = el("composeCharId");
+  const composePostTitle = el("composePostTitle");
+  const composePostBody = el("composePostBody");
+  const composeErr = el("composeErr");
+
+  const state = {
+    me: null,
+    characters: [],
+    freePosts: [],
+    char: null,
+    charPosts: [],
+    postDetail: null,
+  };
+
+  // --- HTTP helper ---
+  async function api(path, opts = {}) {
+    const init = {
+      ...opts,
+      headers: { "Content-Type": "application/json", ...(opts.headers || {}) },
+      credentials: "include",
+    };
+    const res = await fetch(API + path, init);
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || data.ok === false) {
+      const msg = data?.error || ("http_" + res.status);
+      throw new Error(msg);
     }
+    return data;
   }
 
-  // 닉네임 저장
-  async function saveNickname() {
-    const n = document.getElementById('nick-input').value.trim();
-    if(n.length < 2) return alert("두 글자 이상 써주세요!");
-    
+  async function ensureGuest() {
+    await api("/api/v1/guest/init", { method: "POST" });
+  }
+
+  async function ensureNickname() {
+    // cheap check: try setting me by reading current nickname presence via a lightweight call:
+    // We don't have /me endpoint in worker minimal version; so we infer by trying to write and handling 403.
+    // Better: add /me later. For now we just show modal when user tries to post/comment and nickname fails.
+    return true;
+  }
+
+  // --- UI helpers ---
+  function setTabs(active) {
+    el("tabHome").classList.toggle("active", active === "home");
+    el("tabFree").classList.toggle("active", active === "free");
+  }
+
+  function openModal(m) { m.style.display = "flex"; }
+  function closeModal(m) { m.style.display = "none"; }
+
+  function fmtTime(iso) {
     try {
-      const res = await fetch(`${API_URL}/guest/init`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ guest_id: myGid, nickname: n })
-      });
-      if (!res.ok) throw new Error();
-      
-      localStorage.setItem('bbs_nick', n);
-      localStorage.setItem('bbs_gid', myGid);
-      location.reload();
-    } catch(e) { 
-      alert("서버와 연결할 수 없어요. 잠시 후 다시 해보세요!"); 
-    }
+      const d = new Date(iso);
+      return d.toLocaleString("ko-KR", { month:"numeric", day:"numeric", hour:"2-digit", minute:"2-digit" });
+    } catch { return ""; }
   }
 
-  // 화면 전환 (라우터)
-  async function router() {
-    const hash = location.hash || '#home';
-    const app = document.getElementById('app');
-    const title = document.getElementById('title');
+  // --- Renderers ---
+  function renderHome() {
+    hdrTitle.textContent = "무지개 유치원";
+    setTabs("home");
 
-    if (hash === '#home') {
-      title.innerText = "🏡 우리반 친구들";
-      app.innerHTML = '<div class="card">캐릭터를 불러오는 중...</div>';
-      try {
-        const res = await fetch(`${API_URL}/characters`);
-        const chars = await res.json();
-        app.innerHTML = chars.map(c => `
-          <div class="card" style="text-align:center">
-            <div style="font-size:3.5rem; margin-bottom:10px;">${c.avatar_url || '👤'}</div>
-            <strong style="font-size:1.2rem">${c.display_name}</strong>
-            <p style="color:#888; font-size:0.9rem; margin-top:5px;">${c.bio || '반가워요!'}</p>
-          </div>
-        `).join('');
-      } catch(e) { app.innerHTML = "데이터를 가져오지 못했습니다."; }
-    } 
+    const items = state.characters.map(c => `
+      <div class="card" data-char="${c.id}">
+        <img class="avatar" src="${c.avatar_url || ""}" alt="" />
+        <div style="font-weight:700;">${escapeHtml(c.name)}</div>
+        <div class="badge">${escapeHtml(c.role)}</div>
+      </div>
+    `).join("");
 
-    else if (hash === '#free') {
-      title.innerText = "📢 이야기 게시판";
-      app.innerHTML = `
-        <div class="card" style="border: 2px solid var(--main)">
-          <textarea id="post-body" rows="3" placeholder="오늘 어떤 기분인가요? 친구들에게 들려주세요."></textarea>
-          <button onclick="createPost()">글 올리기</button>
+    view.innerHTML = `
+      <div class="hint">원생/선생님을 눌러 프로필(SNS)로 들어가세요.</div>
+      <div class="grid" id="charGrid">${items || "<div class='hint'>캐릭터가 없습니다.</div>"}</div>
+    `;
+
+    el("charGrid").onclick = (e) => {
+      const card = e.target.closest("[data-char]");
+      if (!card) return;
+      location.hash = `#u=${encodeURIComponent(card.dataset.char)}`;
+    };
+  }
+
+  function renderCharacter() {
+    const c = state.char;
+    hdrTitle.textContent = c ? c.name : "프로필";
+    setTabs("home");
+
+    const adminBtn = ADMIN_KEY ? `<button class="btnPrimary" id="btnCharWrite">이 캐릭터로 글쓰기</button>` : "";
+
+    const posts = state.charPosts.map(p => `
+      <div class="item" data-post="${p.id}">
+        <div style="font-weight:700;">${escapeHtml(p.title)}</div>
+        <div class="meta">
+          <span>캐릭터</span>
+          <span>${fmtTime(p.created_at)}</span>
+          <span>댓글 ${p.comment_count ?? 0}</span>
         </div>
-        <div id="list">불러오는 중...</div>
-      `;
-      loadPosts();
-    }
+      </div>
+    `).join("");
 
-    else if (hash.startsWith('#p=')) {
-      const id = hash.split('=')[1];
-      showPostDetail(id);
+    view.innerHTML = `
+      <div class="row" style="margin-bottom:12px;">
+        <button id="btnBack">←</button>
+        <div class="spacer"></div>
+        ${adminBtn}
+      </div>
+      ${c ? `
+        <div class="item" style="cursor:default;">
+          <div class="row">
+            <img class="avatar" src="${c.avatar_url || ""}" alt="" />
+            <div>
+              <div style="font-weight:700;">${escapeHtml(c.name)}</div>
+              <div class="hint">${escapeHtml(c.bio || "")}</div>
+            </div>
+          </div>
+        </div>
+      ` : ""}
+      <div style="height:10px;"></div>
+      <div class="list">${posts || "<div class='hint'>아직 글이 없어요.</div>"}</div>
+    `;
+
+    el("btnBack").onclick = () => history.back();
+
+    const list = view.querySelector(".list");
+    list.onclick = (e) => {
+      const it = e.target.closest("[data-post]");
+      if (!it) return;
+      location.hash = `#p=${it.dataset.post}`;
+    };
+
+    const btn = el("btnCharWrite");
+    if (btn) {
+      btn.onclick = () => openCompose({ mode: "char", characterId: c.id });
     }
   }
 
-  // 게시글 목록 로드
-  async function loadPosts() {
-    try {
-      const res = await fetch(`${API_URL}/posts`);
-      const posts = await res.json();
-      const listEl = document.getElementById('list');
-      if (posts.length === 0) {
-        listEl.innerHTML = '<div class="card" style="text-align:center; color:#999;">첫 번째 글의 주인공이 되어보세요!</div>';
+  function renderFree() {
+    hdrTitle.textContent = "자유게시판";
+    setTabs("free");
+
+    const posts = state.freePosts.map(p => `
+      <div class="item" data-post="${p.id}">
+        <div style="font-weight:700;">${escapeHtml(p.title)}</div>
+        <div class="meta">
+          <span>${p.author_type === "system" ? "캐릭터" : "친구"}</span>
+          <span>${fmtTime(p.created_at)}</span>
+          <span>댓글 ${p.comment_count ?? 0}</span>
+        </div>
+      </div>
+    `).join("");
+
+    view.innerHTML = `
+      <div class="row" style="margin-bottom:12px;">
+        <button class="btnPrimary" id="btnFreeWrite">글쓰기</button>
+        <div class="hint">HOT/BEST는 나중에 단계적으로 적용</div>
+      </div>
+      <div class="list" id="freeList">${posts || "<div class='hint'>첫 글을 써보세요.</div>"}</div>
+    `;
+
+    el("btnFreeWrite").onclick = () => openCompose({ mode: "free" });
+
+    el("freeList").onclick = (e) => {
+      const it = e.target.closest("[data-post]");
+      if (!it) return;
+      location.hash = `#p=${it.dataset.post}`;
+    };
+  }
+
+  function renderPostDetail() {
+    const d = state.postDetail;
+    if (!d) {
+      view.innerHTML = `<div class="hint">글을 찾을 수 없습니다.</div>`;
+      return;
+    }
+    const p = d.post;
+    hdrTitle.textContent = "글";
+
+    const comments = d.comments.map(c => `
+      <div class="item" style="cursor:default;">
+        <div>${escapeHtml(c.body)}</div>
+        <div class="meta"><span>${fmtTime(c.created_at)}</span></div>
+      </div>
+    `).join("");
+
+    view.innerHTML = `
+      <div class="row" style="margin-bottom:12px;">
+        <button id="btnBack">←</button>
+        <div class="spacer"></div>
+      </div>
+
+      <div class="item" style="cursor:default;">
+        <div style="font-weight:800; font-size:18px;">${escapeHtml(p.title)}</div>
+        <div class="meta">
+          <span>${p.author_type === "system" ? "캐릭터" : "친구"}</span>
+          <span>${fmtTime(p.created_at)}</span>
+          <span>댓글 ${p.comment_count ?? 0}</span>
+        </div>
+        <div style="margin-top:10px; white-space:pre-wrap;">${escapeHtml(p.body || "")}</div>
+      </div>
+
+      <div style="height:12px;"></div>
+
+      <div class="item" style="cursor:default;">
+        <div style="font-weight:700;">댓글</div>
+        <textarea id="commentInput" placeholder="댓글을 적어줘"></textarea>
+        <div class="row">
+          <button class="btnPrimary" id="commentSubmit">등록</button>
+        </div>
+        <div class="danger" id="commentErr" style="display:none;"></div>
+      </div>
+
+      <div style="height:12px;"></div>
+      <div class="list">${comments || "<div class='hint'>첫 댓글을 달아보세요.</div>"}</div>
+    `;
+
+    el("btnBack").onclick = () => history.back();
+
+    el("commentSubmit").onclick = async () => {
+      const text = (el("commentInput").value || "").trim();
+      const errEl = el("commentErr");
+      errEl.style.display = "none";
+
+      if (!text) return;
+
+      try {
+        await ensureGuest();
+        await api(`/api/v1/posts/${p.id}/comments`, { method: "POST", body: JSON.stringify({ body: text }) });
+        // reload detail
+        await loadPost(p.id);
+        renderPostDetail();
+      } catch (e) {
+        // nickname required -> show nickname modal
+        if (String(e.message).includes("nickname_required")) {
+          openNickname(async () => {
+            await api(`/api/v1/posts/${p.id}/comments`, { method: "POST", body: JSON.stringify({ body: text }) });
+            await loadPost(p.id);
+            renderPostDetail();
+          });
+          return;
+        }
+        errEl.textContent = e.message;
+        errEl.style.display = "block";
+      }
+    };
+  }
+
+  // --- Modals actions ---
+  function openNickname(onSuccess) {
+    nickErr.style.display = "none";
+    nickInput.value = "";
+    openModal(nickModal);
+
+    el("nickCancel").onclick = () => closeModal(nickModal);
+
+    el("nickSave").onclick = async () => {
+      const name = nickInput.value.trim();
+      nickErr.style.display = "none";
+      try {
+        await ensureGuest();
+        await api("/api/v1/guest/nickname", { method: "POST", body: JSON.stringify({ nickname: name }) });
+        closeModal(nickModal);
+        if (onSuccess) await onSuccess();
+      } catch (e) {
+        nickErr.textContent = e.message;
+        nickErr.style.display = "block";
+      }
+    };
+  }
+
+  function openAdmin() {
+    adminErr.style.display = "none";
+    adminKeyInput.value = "";
+    openModal(adminModal);
+
+    el("adminKeyCancel").onclick = () => closeModal(adminModal);
+
+    el("adminKeySave").onclick = () => {
+      const k = adminKeyInput.value.trim();
+      if (!k) {
+        adminErr.textContent = "키를 입력하세요";
+        adminErr.style.display = "block";
         return;
       }
-      listEl.innerHTML = posts.map(p => `
-        <div class="card" onclick="location.hash='#p=${p.id}'">
-          <div class="post-meta">
-            <span>👤 <b>${p.guests?.nickname || p.author_name}</b></span>
-            <span>${new Date(p.created_at).toLocaleDateString()}</span>
-          </div>
-          <div class="post-body">${p.body}</div>
-          <div style="font-size:0.85rem; color:var(--main); margin-top:12px; font-weight:bold;">💬 댓글 보러가기 →</div>
-        </div>
-      `).join('');
-    } catch(e) { document.getElementById('list').innerHTML = "글을 불러올 수 없습니다."; }
+      ADMIN_KEY = k; // memory only
+      closeModal(adminModal);
+      // return to home
+      location.hash = "#home";
+    };
   }
 
-  // 글 상세 보기 & 댓글 목록
-  async function showPostDetail(id) {
-    const app = document.getElementById('app');
-    app.innerHTML = '<div class="card">내용을 읽어오는 중...</div>';
-    
-    try {
-      const res = await fetch(`${API_URL}/posts/${id}`);
-      const data = await res.json();
-      
-      document.getElementById('title').innerText = "상세 보기";
-      app.innerHTML = `
-        <button onclick="location.hash='#free'" style="background:#bbb; margin-bottom:15px;">⬅️ 목록으로 돌아가기</button>
-        <div class="card">
-          <div class="post-meta">
-            <b>${data.post.guests?.nickname || data.post.author_name}</b>
-            <span>${new Date(data.post.created_at).toLocaleString()}</span>
-          </div>
-          <div class="post-body" style="font-size:1.2rem">${data.post.body}</div>
-        </div>
-        
-        <h4 style="margin:20px 0 10px 5px">💬 댓글 (${data.comments.length})</h4>
-        <div class="comment-list">
-          ${data.comments.length > 0 ? data.comments.map(c => `
-            <div class="comment-item">
-              <div class="comment-author">${c.author_name}</div>
-              <div class="comment-body">${c.body}</div>
-            </div>
-          `).join('') : '<div style="text-align:center; padding:10px; color:#aaa;">아직 댓글이 없어요.</div>'}
-        </div>
+  function openCompose({ mode, characterId }) {
+    composeErr.style.display = "none";
+    composePostTitle.value = "";
+    composePostBody.value = "";
+    composeCharRow.style.display = "none";
 
-        <div class="card" style="margin-top:20px; border-top: 3px solid var(--main);">
-          <input id="cmt-input" placeholder="따뜻한 한마디를 남겨주세요!">
-          <button onclick="addComment(${id})">댓글 쓰기</button>
-        </div>
-      `;
-    } catch(e) { app.innerHTML = "글이 삭제되었거나 찾을 수 없습니다."; }
-  }
+    if (mode === "free") {
+      composeTitle.textContent = "자유게시판 글쓰기";
+      composeCharRow.style.display = "none";
+    } else if (mode === "char") {
+      composeTitle.textContent = "캐릭터로 글쓰기(관리자)";
+      composeCharRow.style.display = "";
+      composeCharId.value = characterId || "";
+    }
 
-  // 글 작성 기능
-  async function createPost() {
-    const body = document.getElementById('post-body').value.trim();
-    if(!body) return alert("내용을 입력해주세요!");
+    openModal(composeModal);
 
-    // 실제로는 별도의 POST /posts API가 필요합니다 (현재 워커에 구현된 로직 사용)
-    // 여기서는 간단히 구현 예시만 보여드리며, 워커에 해당 경로가 있어야 합니다.
-    alert("준비 중인 기능입니다! (백엔드에 글쓰기 API 추가 필요)");
-  }
+    el("composeCancel").onclick = () => closeModal(composeModal);
 
-  // 댓글 등록 기능
-  async function addComment(postId) {
-    const bodyEl = document.getElementById('cmt-input');
-    const body = bodyEl.value.trim();
-    if(!body) return alert("댓글 내용을 써주세요!");
+    el("composeSubmit").onclick = async () => {
+      const title = composePostTitle.value.trim();
+      const body = composePostBody.value.trim();
+      composeErr.style.display = "none";
+      if (title.length < 2) return showComposeErr("제목을 2글자 이상");
+      if (body.length < 2) return showComposeErr("내용을 2글자 이상");
 
-    try {
-      const res = await fetch(`${API_URL}/posts/${postId}/comments`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          guest_id: myGid,
-          nickname: myNick,
-          body: body
-        })
-      });
+      try {
+        await ensureGuest();
+        if (mode === "free") {
+          await api("/api/v1/boards/free/posts", { method: "POST", body: JSON.stringify({ title, body }) });
+          closeModal(composeModal);
+          await loadFree();
+          renderFree();
+          return;
+        }
 
-      if(res.ok) {
-        bodyEl.value = '';
-        showPostDetail(postId); // 새로고침
-      } else {
-        alert("댓글을 저장하지 못했습니다.");
+        // char mode
+        if (!ADMIN_KEY) return showComposeErr("관리자 모드가 필요합니다");
+        const cid = composeCharId.value.trim();
+        if (!cid) return showComposeErr("characterId 필요");
+
+        await api(`/api/v1/admin/characters/${encodeURIComponent(cid)}/posts`, {
+          method: "POST",
+          headers: { "X-Admin-Key": ADMIN_KEY },
+          body: JSON.stringify({ title, body }),
+        });
+        closeModal(composeModal);
+        // reload character
+        await loadCharacter(cid);
+        renderCharacter();
+      } catch (e) {
+        if (String(e.message).includes("nickname_required")) {
+          openNickname(async () => {
+            // retry after nickname set
+            if (mode === "free") {
+              await api("/api/v1/boards/free/posts", { method: "POST", body: JSON.stringify({ title, body }) });
+              closeModal(composeModal);
+              await loadFree();
+              renderFree();
+            }
+          });
+          return;
+        }
+        showComposeErr(e.message);
       }
-    } catch(e) { alert("연결 오류 발생!"); }
+    };
+
+    function showComposeErr(msg) {
+      composeErr.textContent = msg;
+      composeErr.style.display = "block";
+    }
   }
 
-  init();
+  // --- Loads ---
+  async function loadHome() {
+    await ensureGuest();
+    const data = await api("/api/v1/characters", { method: "GET" });
+    state.characters = data.characters || [];
+  }
+
+  async function loadCharacter(id) {
+    await ensureGuest();
+    const c = await api(`/api/v1/characters/${encodeURIComponent(id)}`, { method: "GET" });
+    state.char = c.character;
+
+    const p = await api(`/api/v1/characters/${encodeURIComponent(id)}/posts?limit=20&offset=0`, { method: "GET" });
+    state.charPosts = p.posts || [];
+  }
+
+  async function loadFree() {
+    await ensureGuest();
+    const p = await api(`/api/v1/boards/free/posts?limit=30&offset=0`, { method: "GET" });
+    state.freePosts = p.posts || [];
+  }
+
+  async function loadPost(id) {
+    await ensureGuest();
+    const d = await api(`/api/v1/posts/${encodeURIComponent(id)}`, { method: "GET" });
+    state.postDetail = d;
+  }
+
+  // --- Router ---
+  async function route() {
+    const h = location.hash || "#home";
+
+    try {
+      if (h === "#admin") {
+        openAdmin();
+        return;
+      }
+
+      if (h.startsWith("#u=")) {
+        const id = decodeURIComponent(h.slice(3));
+        await loadCharacter(id);
+        renderCharacter();
+        return;
+      }
+
+      if (h.startsWith("#p=")) {
+        const id = decodeURIComponent(h.slice(3));
+        await loadPost(id);
+        renderPostDetail();
+        return;
+      }
+
+      if (h === "#free") {
+        await loadFree();
+        renderFree();
+        return;
+      }
+
+      // default: home
+      await loadHome();
+      renderHome();
+
+    } catch (e) {
+      view.innerHTML = `<div class="danger">에러: ${escapeHtml(e.message || String(e))}</div>`;
+    }
+  }
+
+  // --- Header buttons ---
+  el("tabHome").onclick = () => location.hash = "#home";
+  el("tabFree").onclick = () => location.hash = "#free";
+
+  el("meBtn").onclick = () => openNickname();
+
+  window.addEventListener("hashchange", route);
+
+  // start
+  route();
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, (c) => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+    }[c]));
+  }
+})();
 </script>
 </body>
 </html>
