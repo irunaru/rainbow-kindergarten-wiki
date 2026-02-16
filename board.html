@@ -3,145 +3,212 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🌈 무지개 유치원 이야기판</title>
+  <title>우리반 이야기판 🌈</title>
   <style>
-    :root { --main: #FFB7B2; --sub: #FFDAC1; --bg: #FFFFD1; --text: #5D4037; }
-    @import url('https://fonts.googleapis.com/css2?family=Gaegu&display=swap');
-    body { font-family: 'Gaegu', cursive; background-color: var(--bg); color: var(--text); margin: 0; padding-bottom: 70px; font-size: 1.2rem; }
-    header { background: var(--main); color: white; padding: 20px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    :root { --main: #FFB7B2; --bg: #FFF9C4; --card: #FFFFFF; --text: #5D4037; }
+    body { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 80px; line-height: 1.6; }
+    header { background: var(--main); color: white; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 10; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
     .container { max-width: 500px; margin: 0 auto; padding: 15px; }
-    .card { background: white; border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 0px var(--sub); border: 2px solid var(--sub); }
-    .post-author { font-weight: bold; color: #FF6B6B; font-size: 0.9rem; }
-    .post-content { margin: 10px 0; line-height: 1.4; }
-    input, textarea { width: 100%; border: 2px solid var(--sub); border-radius: 10px; padding: 10px; font-family: inherit; font-size: 1.1rem; box-sizing: border-box; }
-    button { background: var(--main); border: none; border-radius: 10px; color: white; padding: 10px 20px; cursor: pointer; font-family: inherit; width: 100%; margin-top: 5px; }
-    .nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 2px solid var(--sub); }
-    .nav-item { flex: 1; text-align: center; padding: 15px; cursor: pointer; }
-    #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 100; }
-    .modal-box { background: white; padding: 25px; border-radius: 20px; width: 80%; text-align: center; }
+    .card { background: var(--card); border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 2px solid transparent; }
+    .post-meta { font-size: 0.85rem; color: #888; margin-bottom: 8px; display: flex; justify-content: space-between; }
+    .post-body { font-size: 1.1rem; white-space: pre-wrap; }
+    input, textarea { width: 100%; border: 2px solid #eee; border-radius: 10px; padding: 12px; font-size: 1rem; box-sizing: border-box; margin-bottom: 10px; font-family: inherit; }
+    button { background: var(--main); color: white; border: none; padding: 12px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; font-size: 1rem; }
+    button:active { opacity: 0.8; }
+    .nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #eee; z-index: 10; }
+    .nav-btn { flex: 1; text-align: center; padding: 15px; cursor: pointer; font-size: 1.1rem; transition: background 0.2s; }
+    .nav-btn:hover { background: #fff5f5; }
+    
+    /* 모달 */
+    #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(3px); }
+    .modal-content { background: white; padding: 30px; border-radius: 20px; width: 85%; max-width: 400px; text-align: center; }
+    
+    /* 댓글 스타일 */
+    .comment-list { margin-top: 20px; background: #fffdf0; border-radius: 10px; padding: 10px; }
+    .comment-item { padding: 10px; border-bottom: 1px solid #eee; }
+    .comment-item:last-child { border-bottom: none; }
+    .comment-author { font-weight: bold; color: #FF8A80; font-size: 0.9rem; }
+    .comment-body { font-size: 0.95rem; margin-top: 3px; }
   </style>
 </head>
 <body>
 
-<header>
-  <h1 id="view-title">🌈 무지개 이야기판</h1>
-</header>
+<header><h2 id="title">우리반 이야기판</h2></header>
 
-<div class="container" id="app">
-  </div>
+<div class="container" id="app">불러오는 중...</div>
 
 <div class="nav">
-  <div class="nav-item" onclick="location.hash='#home'">🏡 홈</div>
-  <div class="nav-item" onclick="location.hash='#free'">📢 게시판</div>
+  <div class="nav-btn" onclick="location.hash='#home'">🏡 홈</div>
+  <div class="nav-btn" onclick="location.hash='#free'">📢 게시판</div>
 </div>
 
 <div id="modal">
-  <div class="modal-box">
-    <h2>📛 이름표를 만들어요!</h2>
-    <p>우리반 친구들이 알아볼 수 있게<br>이름을 적어주세요.</p>
-    <input type="text" id="nick-input" placeholder="예: 귀요미사자">
+  <div class="modal-content">
+    <h3 style="margin-top:0">📛 이름표 만들기</h3>
+    <p>우리반 친구들이 알아볼 수 있게<br>이름을 적어주세요!</p>
+    <input type="text" id="nick-input" placeholder="예: 무지개기린">
     <button onclick="saveNickname()">교실 입장!</button>
   </div>
 </div>
 
 <script>
-  // 1. 자신의 Worker 주소로 수정 필수!
-  const API_URL = "rainbow-bbs-api.irunaru.workers.dev"; 
+  // [1] 본인의 API 주소 (끝에 /api/v1을 붙여 경로를 단순화합니다)
+  const API_URL = "https://rainbow-bbs-api.irunaru.workers.dev/api/v1";
   
   let myNick = localStorage.getItem('bbs_nick');
   let myGid = localStorage.getItem('bbs_gid') || crypto.randomUUID();
 
+  // 앱 시작
   async function init() {
     if (!myNick) {
       document.getElementById('modal').style.display = 'flex';
     } else {
       localStorage.setItem('bbs_gid', myGid);
-      window.addEventListener('hashchange', router);
+      window.onhashchange = router;
       router();
     }
   }
 
+  // 닉네임 저장
   async function saveNickname() {
-    const nick = document.getElementById('nick-input').value.trim();
-    if (nick.length < 2) return alert("두 글자 이상 써주세요!");
+    const n = document.getElementById('nick-input').value.trim();
+    if(n.length < 2) return alert("두 글자 이상 써주세요!");
     
-    await fetch(`${API_URL}/api/v1/guest/init`, {
-      method: 'POST',
-      body: JSON.stringify({ guest_id: myGid, nickname: nick })
-    });
-    
-    localStorage.setItem('bbs_nick', nick);
-    localStorage.setItem('bbs_gid', myGid);
-    location.reload();
+    try {
+      const res = await fetch(`${API_URL}/guest/init`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ guest_id: myGid, nickname: n })
+      });
+      if (!res.ok) throw new Error();
+      
+      localStorage.setItem('bbs_nick', n);
+      localStorage.setItem('bbs_gid', myGid);
+      location.reload();
+    } catch(e) { 
+      alert("서버와 연결할 수 없어요. 잠시 후 다시 해보세요!"); 
+    }
   }
 
+  // 화면 전환 (라우터)
   async function router() {
     const hash = location.hash || '#home';
     const app = document.getElementById('app');
-    
+    const title = document.getElementById('title');
+
     if (hash === '#home') {
-      app.innerHTML = "로딩 중...";
-      const chars = await (await fetch(`${API_URL}/api/v1/characters`)).json();
-      app.innerHTML = `<h3>우리반 선생님과 친구들</h3>` + chars.map(c => `
-        <div class="card" onclick="alert('${c.bio}')">
-          <span style="font-size:2rem">${c.avatar_url || '👤'}</span>
-          <strong>${c.display_name}</strong>
-        </div>
-      `).join('');
+      title.innerText = "🏡 우리반 친구들";
+      app.innerHTML = '<div class="card">캐릭터를 불러오는 중...</div>';
+      try {
+        const res = await fetch(`${API_URL}/characters`);
+        const chars = await res.json();
+        app.innerHTML = chars.map(c => `
+          <div class="card" style="text-align:center">
+            <div style="font-size:3.5rem; margin-bottom:10px;">${c.avatar_url || '👤'}</div>
+            <strong style="font-size:1.2rem">${c.display_name}</strong>
+            <p style="color:#888; font-size:0.9rem; margin-top:5px;">${c.bio || '반가워요!'}</p>
+          </div>
+        `).join('');
+      } catch(e) { app.innerHTML = "데이터를 가져오지 못했습니다."; }
     } 
-    
+
     else if (hash === '#free') {
+      title.innerText = "📢 이야기 게시판";
       app.innerHTML = `
-        <div class="card">
-          <textarea id="post-input" placeholder="무슨 이야기를 할까?"></textarea>
-          <button onclick="writePost()">글쓰기</button>
+        <div class="card" style="border: 2px solid var(--main)">
+          <textarea id="post-body" rows="3" placeholder="오늘 어떤 기분인가요? 친구들에게 들려주세요."></textarea>
+          <button onclick="createPost()">글 올리기</button>
         </div>
-        <div id="post-list">로딩 중...</div>
+        <div id="list">불러오는 중...</div>
       `;
       loadPosts();
     }
 
     else if (hash.startsWith('#p=')) {
-      const postId = hash.split('=')[1];
-      showDetail(postId);
+      const id = hash.split('=')[1];
+      showPostDetail(id);
     }
   }
 
+  // 게시글 목록 로드
   async function loadPosts() {
-    const posts = await (await fetch(`${API_URL}/api/v1/posts`)).json();
-    document.getElementById('post-list').innerHTML = posts.map(p => `
-      <div class="card" onclick="location.hash='#p=${p.id}'">
-        <div class="post-author">${p.author_type === 'system' ? '🌟' : '👤'} ${p.guests?.nickname || p.author_name}</div>
-        <div class="post-content">${p.body}</div>
-        <div style="font-size:0.8rem; color:#aaa;">댓글 보기...</div>
-      </div>
-    `).join('');
+    try {
+      const res = await fetch(`${API_URL}/posts`);
+      const posts = await res.json();
+      const listEl = document.getElementById('list');
+      if (posts.length === 0) {
+        listEl.innerHTML = '<div class="card" style="text-align:center; color:#999;">첫 번째 글의 주인공이 되어보세요!</div>';
+        return;
+      }
+      listEl.innerHTML = posts.map(p => `
+        <div class="card" onclick="location.hash='#p=${p.id}'">
+          <div class="post-meta">
+            <span>👤 <b>${p.guests?.nickname || p.author_name}</b></span>
+            <span>${new Date(p.created_at).toLocaleDateString()}</span>
+          </div>
+          <div class="post-body">${p.body}</div>
+          <div style="font-size:0.85rem; color:var(--main); margin-top:12px; font-weight:bold;">💬 댓글 보러가기 →</div>
+        </div>
+      `).join('');
+    } catch(e) { document.getElementById('list').innerHTML = "글을 불러올 수 없습니다."; }
   }
 
-  async function showDetail(postId) {
+  // 글 상세 보기 & 댓글 목록
+  async function showPostDetail(id) {
     const app = document.getElementById('app');
-    // 실제로는 단일 게시글 API를 호출해야 하지만, 여기선 간단히 구현
-    app.innerHTML = `<div class="card">로딩 중...</div>`;
+    app.innerHTML = '<div class="card">내용을 읽어오는 중...</div>';
     
-    // 댓글 목록과 상세 내용을 가져오는 로직 (기존 구현 참고)
-    // 에러 방지를 위해 간단한 UI만 먼저 표시
-    app.innerHTML = `
-      <button onclick="location.hash='#free'">⬅️ 목록으로</button>
-      <div class="card" id="detail-content">내용을 불러오는 중...</div>
-      <div id="comment-list"></div>
-      <div class="card">
-        <input id="cmt-input" placeholder="댓글을 달아보세요!">
-        <button onclick="submitComment(${postId})">등록</button>
-      </div>
-    `;
+    try {
+      const res = await fetch(`${API_URL}/posts/${id}`);
+      const data = await res.json();
+      
+      document.getElementById('title').innerText = "상세 보기";
+      app.innerHTML = `
+        <button onclick="location.hash='#free'" style="background:#bbb; margin-bottom:15px;">⬅️ 목록으로 돌아가기</button>
+        <div class="card">
+          <div class="post-meta">
+            <b>${data.post.guests?.nickname || data.post.author_name}</b>
+            <span>${new Date(data.post.created_at).toLocaleString()}</span>
+          </div>
+          <div class="post-body" style="font-size:1.2rem">${data.post.body}</div>
+        </div>
+        
+        <h4 style="margin:20px 0 10px 5px">💬 댓글 (${data.comments.length})</h4>
+        <div class="comment-list">
+          ${data.comments.length > 0 ? data.comments.map(c => `
+            <div class="comment-item">
+              <div class="comment-author">${c.author_name}</div>
+              <div class="comment-body">${c.body}</div>
+            </div>
+          `).join('') : '<div style="text-align:center; padding:10px; color:#aaa;">아직 댓글이 없어요.</div>'}
+        </div>
+
+        <div class="card" style="margin-top:20px; border-top: 3px solid var(--main);">
+          <input id="cmt-input" placeholder="따뜻한 한마디를 남겨주세요!">
+          <button onclick="addComment(${id})">댓글 쓰기</button>
+        </div>
+      `;
+    } catch(e) { app.innerHTML = "글이 삭제되었거나 찾을 수 없습니다."; }
   }
 
-  async function submitComment(postId) {
-    const body = document.getElementById('cmt-input').value;
-    if (!body) return;
+  // 글 작성 기능
+  async function createPost() {
+    const body = document.getElementById('post-body').value.trim();
+    if(!body) return alert("내용을 입력해주세요!");
+
+    // 실제로는 별도의 POST /posts API가 필요합니다 (현재 워커에 구현된 로직 사용)
+    // 여기서는 간단히 구현 예시만 보여드리며, 워커에 해당 경로가 있어야 합니다.
+    alert("준비 중인 기능입니다! (백엔드에 글쓰기 API 추가 필요)");
+  }
+
+  // 댓글 등록 기능
+  async function addComment(postId) {
+    const bodyEl = document.getElementById('cmt-input');
+    const body = bodyEl.value.trim();
+    if(!body) return alert("댓글 내용을 써주세요!");
 
     try {
-      const res = await fetch(`${API_URL}/api/v1/posts/${postId}/comments`, {
+      const res = await fetch(`${API_URL}/posts/${postId}/comments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -150,14 +217,14 @@
           body: body
         })
       });
+
       if(res.ok) {
-        alert("댓글이 달렸어요! 🎉");
-        document.getElementById('cmt-input').value = '';
-        router(); // 새로고침
+        bodyEl.value = '';
+        showPostDetail(postId); // 새로고침
+      } else {
+        alert("댓글을 저장하지 못했습니다.");
       }
-    } catch(e) {
-      alert("문제가 생겼어요: " + e.message);
-    }
+    } catch(e) { alert("연결 오류 발생!"); }
   }
 
   init();
